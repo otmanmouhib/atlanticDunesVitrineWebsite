@@ -73,8 +73,10 @@ export default function ContactPage() {
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm">
             <h2 className="text-xl font-semibold text-slate-950">Coordonnées</h2>
             <p className="mt-4 text-sm leading-7 text-slate-700">contact@atlantic-dunes.ma</p>
-            <p className="mt-2 text-sm leading-7 text-slate-700">+212 5XX XXX XXX</p>
-            <p className="mt-4 text-sm leading-7 text-slate-700">Casablanca, Maroc</p>
+            <p className="mt-4 text-sm leading-7 text-slate-700">45 Rue Ahmed Chaouki appt n°1 Centre-Ville Tanger, Maroc</p>
+            <p className="mt-4 text-sm leading-7 text-slate-700">Tel 1 : +212 6 00 64 43 60</p>
+            <p className="mt-2 text-sm leading-7 text-slate-700">Tel 2 : +212 661 258 388</p>
+            <p className="mt-2 text-sm leading-7 text-slate-700">Fax : +212 539 311875</p>
           </div>
           <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
             <h2 className="text-xl font-semibold text-slate-950">Tarification</h2>

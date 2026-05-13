@@ -38,8 +38,10 @@ export default function Footer() {
             <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Contact</h4>
             <div className="mt-4 text-sm leading-7 text-slate-300">
               <p>contact@atlantic-dunes.ma</p>
-              <p>+212 5XX XXX XXX</p>
-              <p className="mt-3 text-slate-400">Casablanca, Maroc</p>
+              <p>+212 6 00 64 43 60</p>
+              <p>+212 661 258 388</p>
+              <p>Fax : +212 539 311875</p>
+              <p className="mt-3 text-slate-400">45 Rue Ahmed Chaouki appt n°1 Centre-Ville Tanger, Maroc</p>
             </div>
           </div>
         </div>
