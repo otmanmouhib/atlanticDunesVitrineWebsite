@@ -38,24 +38,24 @@ export default function AboutPage() {
             <h2 className="text-xl font-semibold text-slate-950">Notre équipe</h2>
             <div className="mt-6 space-y-6">
               <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-full bg-slate-200" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-lg font-bold text-white">M</div>
                 <div>
-                  <p className="font-semibold text-slate-900">Leila Haddad</p>
-                  <p className="text-sm text-slate-600">Directrice technique</p>
+                  <p className="font-semibold text-slate-900">Mohammed</p>
+                  <p className="text-sm text-slate-600">Directeur général</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-full bg-slate-200" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-100 text-lg font-bold text-brand-700">O</div>
                 <div>
-                  <p className="font-semibold text-slate-900">Youssef Bennis</p>
-                  <p className="text-sm text-slate-600">Responsable projets</p>
+                  <p className="font-semibold text-slate-900">Otman</p>
+                  <p className="text-sm text-slate-600">Responsable technique</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-full bg-slate-200" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-lg font-bold text-slate-600">M</div>
                 <div>
-                  <p className="font-semibold text-slate-900">Meryem Azizi</p>
-                  <p className="text-sm text-slate-600">Consultante environnement</p>
+                  <p className="font-semibold text-slate-900">Mounir</p>
+                  <p className="text-sm text-slate-600">Chargé de projets</p>
                 </div>
               </div>
             </div>
