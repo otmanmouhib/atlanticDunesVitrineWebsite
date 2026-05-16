@@ -1,0 +1,179 @@
+Good direction. Here is the full updated catalog with maintenance integrated as a cross-pole `domain` tag across all relevant poles, plus the updated summary.
+
+---
+
+## Pole 1 — Environnement & Traitement Industriel `env`
+
+### Products
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Station de traitement des eaux usées clé en main | `water` |
+| 2 | Unité de traitement de l'air / dépoussiéreur | `air` |
+| 3 | Filtre presse + convoyeur | `waste` |
+| 4 | Centrale de tri de déchets compacte ou modulaire | `waste` |
+| 5 | Ligne de compactage / briquettage de déchets | `waste` |
+
+### Services
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Étude de faisabilité (eau, air, déchets) | `water` |
+| 2 | Modélisation dispersion atmosphérique | `air` |
+| 3 | Diagnostic déchets (valorisation, traitement) | `waste` |
+| 4 | Mission AMO environnementale | `waste` |
+| 5 | Contrat de maintenance station de traitement des eaux | `maintenance` |
+| 6 | Contrat de maintenance unité dépoussiérage & air | `maintenance` |
+
+---
+
+## Pole 2 — Énergie & Développement Durable `energy`
+
+### Products
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Installation photovoltaïque industrielle | `solar-pv` |
+| 2 | Système solaire thermique process | `solar-thermal` |
+| 3 | Installation hybride solaire + réseau | `solar-pv` |
+| 4 | Système de stockage par batteries (BESS) | `storage` |
+| 5 | Unité de méthanisation (petite ou moyenne puissance) | `biogas` |
+
+### Services
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Calcul bilan carbone (scope 1, 2, 3) | `carbon` |
+| 2 | Audit énergétique (réglementaire ou volontaire) | `audit` |
+| 3 | Étude de dimensionnement solaire PV | `solar-pv` |
+| 4 | Audit d'autoconsommation & rentabilité | `solar-pv` |
+| 5 | Contrat O&M solaire PV & BESS (nettoyage, onduleur, batteries) | `maintenance` |
+
+---
+
+## Pole 3 — Sécurité & Conformité `safety`
+
+### Products
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Système de détection incendie industriel | `fire` |
+| 2 | Système de détection gaz (fixe ou portable) | `gas` |
+| 3 | Système de contrôle d'accès industriel | `access` |
+| 4 | Vidéosurveillance industrielle (CCTV / IP) | `cctv` |
+| 5 | Système d'arrêt d'urgence (ESD / SIL) | `esd` |
+
+### Services
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Étude d'impact environnemental | `eco` |
+| 2 | Analyse du cycle de vie (ACV) | `eco` |
+| 3 | Dossier de conformité (ICPE, autorisation environnementale) | `regulatory` |
+| 4 | Étude de danger / risque industriel | `risk` |
+| 5 | Contrat de vérification & étalonnage détecteurs gaz / incendie | `maintenance` |
+| 6 | Contrat de maintenance systèmes ESD / contrôle d'accès / CCTV | `maintenance` |
+
+---
+
+## Pole 4 — Ingénierie Électrique `elec`
+
+### Products
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Installation de ventilation industrielle (ATEX) | `atex` |
+| 2 | Armoire électrique industrielle (TGBT / commande moteur) | `distribution` |
+| 3 | Système d'automatisme PLC / automate programmable | `automation` |
+| 4 | UPS / onduleur industriel (continuité d'alimentation) | `power` |
+
+### Services
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Audit des installations électriques | `distribution` |
+| 2 | Étude d'automatisation & instrumentation (I&E) | `automation` |
+| 3 | Contrat de maintenance préventive TGBT, UPS & ventilation ATEX | `maintenance` |
+
+---
+
+## Pole 5 — Numérique & IA `digital`
+
+### Products
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Plateforme IoT de monitoring environnemental | `iot` |
+| 2 | Système SCADA industriel (supervision & télégestion) | `scada` |
+| 3 | Jumeau numérique d'installation industrielle | `simulation` |
+
+### Services
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Déploiement IoT industriel | `iot` |
+| 2 | Développement de solution IA prédictive | `ai` |
+| 3 | Conseil en transformation numérique industrielle | `consulting` |
+| 4 | Contrat de maintenance SCADA / IoT (mises à jour, cybersécurité, backup) | `maintenance` |
+
+---
+
+## Pole 6 — Nucléaire & Radioprotection `nuclear`
+
+### Products
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Détecteur de radioactivité (fixe ou portable) | `detection` |
+| 2 | Système de dosimétrie (individuelle et collective) | `dosimetry` |
+
+### Services
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Dosimétrie pour installations industrielles et médicales | `dosimetry` |
+| 2 | Audit de radioprotection pour installations industrielles et médicales | `radioprotection` |
+| 3 | Étalonnage annuel détecteurs & échange dosimètres | `maintenance` |
+
+---
+
+## Pole 7 — Formation & Coaching `training`
+
+### Products
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Kit de formation e-learning (accès plateforme LMS) | `elearning` |
+| 2 | Simulateur de process industriel (outil pédagogique) | `simulation` |
+
+### Services
+| # | Title | `domain` |
+|---|-------|----------|
+| 1 | Formation traitement des eaux, air et déchets | `env` |
+| 2 | Formation énergies renouvelables & solaire PV | `energy` |
+| 3 | Formation sécurité industrielle & réglementation | `safety` |
+| 4 | Formation électrotechnique & automatismes industriels | `elec` |
+| 5 | Formation IoT, SCADA & IA industrielle | `digital` |
+| 6 | Formation radioprotection & dosimétrie (certifiée AIEA) | `nuclear` |
+| 7 | Coaching & accompagnement managérial HSE | `coaching` |
+
+---
+
+## Summary of final catalog size
+
+| Pole | `pole` slug | Products | Services | Total |
+|------|-------------|:--------:|:--------:|:-----:|
+| Environnement & Traitement Industriel | `env` | 5 | 6 | **11** |
+| Énergie & Développement Durable | `energy` | 5 | 5 | **10** |
+| Sécurité & Conformité | `safety` | 5 | 6 | **11** |
+| Ingénierie Électrique | `elec` | 4 | 3 | **7** |
+| Numérique & IA | `digital` | 3 | 4 | **7** |
+| Nucléaire & Radioprotection | `nuclear` | 2 | 3 | **5** |
+| Formation & Coaching | `training` | 2 | 7 | **9** |
+| **Total** | | **26** | **34** | **60** |
+
+---
+
+## Maintenance services at a glance (cross-pole view)
+
+| Pole | Maintenance service | Revenue model |
+|------|---------------------|---------------|
+| `env` | WWTP + air depollution | Annual contract (8–12% of equipment cost) |
+| `energy` | Solar PV + BESS O&M | €/kWp/year or fixed monthly |
+| `safety` | Gas/fire detectors + ESD/CCTV | Per-device annual contract (regulatory mandatory) |
+| `elec` | TGBT + UPS + ATEX ventilation | Time & materials or fixed annual |
+| `digital` | SCADA + IoT platform | Monthly SaaS-like subscription |
+| `nuclear` | Detectors + dosimeters | Per-device + per-dosimeter fee |
+
+**6 maintenance services = 6 recurring revenue streams.** All filterable via `domain: "maintenance"` in the UI.
+
+---
+
+Ready to implement all 60 items into the codebase?You've used 75% of your weekly rate limit. Your weekly rate limit will reset on May 18 at 1:00 AM. [Learn More](https://aka.ms/github-copilot-rate-limit-error)

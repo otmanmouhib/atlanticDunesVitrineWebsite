@@ -1,7 +1,10 @@
 import { notFound } from "next/navigation";
 import QuoteButton from "@/components/QuoteButton";
 import Link from "next/link";
-import { services, type Service } from "@/data/services";
+import { services } from "@/data/services";
+import { products } from "@/data/products";
+import { getDomainLabel } from "@/data/domains";
+import { getPoleLabel } from "@/data/poles";
 
 function getService(slug: string) {
   return services.find((service) => service.slug === slug);
@@ -18,7 +21,14 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
     notFound();
   }
 
-  const related = services.filter((item) => item.domain === service.domain && item.slug !== service.slug).slice(0, 3);
+  const related = services.filter((item) => item.pole === service.pole && item.slug !== service.slug).slice(0, 3);
+  const linkedTraining = service.pole !== "training"
+    ? services.find((s) => s.pole === "training" && s.domain === service.pole)
+    : undefined;
+  const linkedMaintenance = service.domain !== "maintenance"
+    ? services.find((s) => s.domain === "maintenance" && s.pole === service.pole && s.slug !== service.slug)
+    : undefined;
+  const linkedProducts = products.filter((p) => p.pole === service.pole).slice(0, 3);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -53,8 +63,12 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
 
           <aside className="space-y-6 rounded-3xl border border-slate-200 bg-slate-50 p-6">
             <div>
+              <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Pôle</p>
+              <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-700">{getPoleLabel(service.pole)}</p>
+            </div>
+            <div>
               <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Domaine</p>
-              <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900">{service.domain}</p>
+              <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900">{getDomainLabel(service.domain)}</p>
             </div>
             <div>
               <h2 className="text-lg font-semibold text-slate-950">Services liés</h2>
@@ -70,6 +84,38 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
                 )}
               </div>
             </div>
+            {linkedTraining && (
+              <div>
+                <h2 className="text-lg font-semibold text-slate-950">Formation liée</h2>
+                <div className="mt-4">
+                  <Link href={`/services/${linkedTraining.slug}`} className="block rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 transition hover:border-brand-400 hover:bg-brand-50">
+                    {linkedTraining.title}
+                  </Link>
+                </div>
+              </div>
+            )}
+            {linkedMaintenance && (
+              <div>
+                <h2 className="text-lg font-semibold text-slate-950">Maintenance liée</h2>
+                <div className="mt-4">
+                  <Link href={`/services/${linkedMaintenance.slug}`} className="block rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 transition hover:border-brand-400 hover:bg-brand-50">
+                    {linkedMaintenance.title}
+                  </Link>
+                </div>
+              </div>
+            )}
+            {linkedProducts.length > 0 && (
+              <div>
+                <h2 className="text-lg font-semibold text-slate-950">Produits liés</h2>
+                <div className="mt-4 space-y-3">
+                  {linkedProducts.map((item) => (
+                    <Link key={item.slug} href={`/products/${item.slug}`} className="block rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 transition hover:border-brand-400 hover:bg-brand-50">
+                      {item.title}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </aside>
         </div>
       </div>

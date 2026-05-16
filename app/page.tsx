@@ -2,9 +2,19 @@ import Link from "next/link";
 import QuoteButton from "@/components/QuoteButton";
 import { products } from "@/data/products";
 import { services } from "@/data/services";
+import { getDomainLabel } from "@/data/domains";
 
-const featuredServices = services.slice(0, 3);
-const featuredProducts = products.slice(0, 3);
+function selectFeaturedByDistinctPoles<T extends { pole: string }>(items: T[], count = 3) {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    if (seen.has(item.pole)) return false;
+    seen.add(item.pole);
+    return true;
+  }).slice(0, count);
+}
+
+const featuredServices = selectFeaturedByDistinctPoles(services, 3);
+const featuredProducts = selectFeaturedByDistinctPoles(products, 3);
 
 const strengths = [
   {
@@ -53,8 +63,8 @@ export default function HomePage() {
               </h1>
 
               <p className="mt-5 text-base leading-7 text-slate-600 sm:text-lg">
-                Nous concevons et déployons des solutions durables pour l&apos;eau, l&apos;air, les déchets
-                et l&apos;énergie — avec un accompagnement technique sur mesure pour vos projets industriels.
+                Nous concevons et déployons des solutions durables sur 7 pôles d&apos;expertise : eau, air, déchets,
+                énergie, sécurité, numérique et formation pour vos projets industriels.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -202,7 +212,7 @@ export default function HomePage() {
               >
                 <div className="flex items-center justify-between">
                   <span className="rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-brand-700">
-                    {service.domain}
+                    {getDomainLabel(service.domain)}
                   </span>
                   <span className="text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-brand-500" aria-hidden="true">→</span>
                 </div>
@@ -238,7 +248,7 @@ export default function HomePage() {
                 <div className="relative flex h-40 items-center justify-center bg-brand-50">
                   <span className="text-xs font-medium text-brand-300">Visuel produit</span>
                   <span className="absolute right-4 top-4 rounded-full border border-brand-100 bg-white px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-brand-700">
-                    {product.domain}
+                    {getDomainLabel(product.domain)}
                   </span>
                 </div>
                 <div className="p-6">

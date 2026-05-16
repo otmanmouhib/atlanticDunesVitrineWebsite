@@ -1,13 +1,5 @@
 import Link from "next/link";
-
-const domains = [
-  { label: "Water & wastewater", tag: "water" },
-  { label: "Air & emissions", tag: "air" },
-  { label: "Waste & recycling", tag: "waste" },
-  { label: "Energy & climate", tag: "energy" },
-  { label: "Eco-construction", tag: "eco" },
-  { label: "Industrial safety", tag: "safety" }
-];
+import { domainTags } from "@/data/domains";
 
 export default function Footer() {
   return (
@@ -21,12 +13,12 @@ export default function Footer() {
             </p>
           </div>
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Expertise domains</h4>
-            <div className="mt-4 space-y-2 text-sm">
-              {domains.map((domain) => (
+            <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Domaines d&apos;expertise</h4>
+            <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-3">
+              {domainTags.map((domain) => (
                 <Link
-                  key={domain.tag}
-                  href={`/services?domain=${domain.tag}`}
+                  key={domain.slug}
+                  href={`/services?domain=${domain.slug}`}
                   className="block text-slate-300 transition hover:text-white"
                 >
                   {domain.label}
