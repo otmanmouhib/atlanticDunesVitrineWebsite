@@ -1,25 +1,24 @@
 import Link from "next/link";
 
-export default function ReferencesPage() {
+export default function NewsPage() {
   return (
     <div className="relative overflow-hidden bg-slate-50 py-14 sm:py-16">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-brand-50 to-transparent" />
       <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
         <div className="relative z-10 rounded-[2rem] border border-slate-200/90 bg-white/95 p-10 shadow-[0_30px_90px_rgba(15,23,42,0.12)] backdrop-blur-sm sm:p-12">
-          <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Références</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Actualités</p>
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-slate-950 sm:text-5xl">
-            Références Atlantic Dunes
+            News Atlantic Dunes
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-            Notre section Références est en cours de préparation. Bientôt, vous y trouverez nos études de cas,
-            retours clients et projets industriels représentatifs.
+            Notre espace actualités est actuellement en construction. Revenez bientôt pour des annonces de projets, des événements et des nouveautés de l’entreprise.
           </p>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-3">
             {[
-              { label: "Études de cas", value: "Bientôt disponibles" },
+              { label: "Annonces", value: "Bientôt disponibles" },
               { label: "Projets", value: "En préparation" },
-              { label: "Témoignages", value: "À venir" },
+              { label: "Événements", value: "Catalogue à venir" },
             ].map((item) => (
               <div key={item.label} className="rounded-3xl border border-slate-200 bg-slate-50 p-5 text-left shadow-sm">
                 <p className="text-xs uppercase tracking-[0.24em] text-slate-500">{item.label}</p>
