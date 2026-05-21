@@ -8,6 +8,7 @@ export type Product = {
   pole: string;
   domain: string;
   pdfLink: string;
+  image?: string;
 };
 
 export const products: Product[] = [
@@ -29,6 +30,7 @@ export const products: Product[] = [
     pole: "env",
     domain: "water",
     pdfLink: "#",
+    image: "/station-traitement-eaux-usees.png",
   },
   {
     slug: "unite-traitement-air-depoussierage",
@@ -46,6 +48,7 @@ export const products: Product[] = [
     pole: "env",
     domain: "air",
     pdfLink: "#",
+    image: "/unite-traitement-air-depoussierage.png",
   },
   {
     slug: "filtre-presse-convoyeur",
@@ -63,6 +66,7 @@ export const products: Product[] = [
     pole: "env",
     domain: "waste",
     pdfLink: "#",
+    image: "/filtre-presse-convoyeur.png",
   },
   {
     slug: "centrale-tri-dechets",
@@ -80,6 +84,7 @@ export const products: Product[] = [
     pole: "env",
     domain: "waste",
     pdfLink: "#",
+    image: "/centrale-tri-dechets.png",
   },
   {
     slug: "ligne-compactage-briquettage-dechets",
@@ -97,6 +102,7 @@ export const products: Product[] = [
     pole: "env",
     domain: "waste",
     pdfLink: "#",
+    image: "/ligne-compactage-briquettage-dechets.png",
   },
 
   // ── POLE: energy ──────────────────────────────────────────────────────
@@ -116,6 +122,7 @@ export const products: Product[] = [
     pole: "energy",
     domain: "solar-pv",
     pdfLink: "#",
+    image: "/installation-photovoltaique-industrielle.png",
   },
   {
     slug: "systeme-solaire-thermique-process",
@@ -133,6 +140,7 @@ export const products: Product[] = [
     pole: "energy",
     domain: "solar-thermal",
     pdfLink: "#",
+    image: "/systeme-solaire-thermique-process.png",
   },
   {
     slug: "installation-hybride-solaire-reseau",
@@ -150,6 +158,7 @@ export const products: Product[] = [
     pole: "energy",
     domain: "solar-pv",
     pdfLink: "#",
+    image: "/installation-hybride-solaire-reseau.png",
   },
   {
     slug: "systeme-stockage-batteries-bess",
@@ -167,6 +176,7 @@ export const products: Product[] = [
     pole: "energy",
     domain: "storage",
     pdfLink: "#",
+    image: "/systeme-stockage-batteries-bess.png",
   },
   {
     slug: "unite-methanisation",
@@ -184,6 +194,7 @@ export const products: Product[] = [
     pole: "energy",
     domain: "biogas",
     pdfLink: "#",
+    image: "/unite-methanisation.png",
   },
 
   // ── POLE: safety ──────────────────────────────────────────────────────
@@ -203,6 +214,7 @@ export const products: Product[] = [
     pole: "safety",
     domain: "fire",
     pdfLink: "#",
+    image: "/systeme-detection-incendie-industriel.png",
   },
   {
     slug: "systeme-detection-gaz",
@@ -220,6 +232,7 @@ export const products: Product[] = [
     pole: "safety",
     domain: "gas",
     pdfLink: "#",
+    image: "/systeme-detection-gaz.png",
   },
   {
     slug: "systeme-controle-acces-industriel",
@@ -237,6 +250,7 @@ export const products: Product[] = [
     pole: "safety",
     domain: "access",
     pdfLink: "#",
+    image: "/systeme-controle-acces-industriel.png",
   },
   {
     slug: "videosurveillance-industrielle-cctv",
@@ -254,6 +268,7 @@ export const products: Product[] = [
     pole: "safety",
     domain: "cctv",
     pdfLink: "#",
+    image: "/videosurveillance-industrielle-cctv.png",
   },
   {
     slug: "systeme-arret-urgence-esd-sil",
@@ -271,6 +286,7 @@ export const products: Product[] = [
     pole: "safety",
     domain: "esd",
     pdfLink: "#",
+    image: "/systeme-arret-urgence-esd-sil.png",
   },
 
   // ── POLE: elec ────────────────────────────────────────────────────────
@@ -290,6 +306,7 @@ export const products: Product[] = [
     pole: "elec",
     domain: "atex",
     pdfLink: "#",
+    image: "/installation-ventilation-industrielle-atex.png",
   },
   {
     slug: "armoire-electrique-industrielle-tgbt",
@@ -307,6 +324,7 @@ export const products: Product[] = [
     pole: "elec",
     domain: "distribution",
     pdfLink: "#",
+    image: "/armoire-electrique-industrielle-tgbt.png",
   },
   {
     slug: "systeme-automatisme-plc",
@@ -324,6 +342,7 @@ export const products: Product[] = [
     pole: "elec",
     domain: "automation",
     pdfLink: "#",
+    image: "/systeme-automatisme-plc.png",
   },
   {
     slug: "ups-onduleur-industriel",
@@ -341,6 +360,7 @@ export const products: Product[] = [
     pole: "elec",
     domain: "power",
     pdfLink: "#",
+    image: "/ups-onduleur-industriel.png",
   },
 
   // ── POLE: digital ─────────────────────────────────────────────────────
@@ -360,6 +380,7 @@ export const products: Product[] = [
     pole: "digital",
     domain: "iot",
     pdfLink: "#",
+    image: "/plateforme-iot-monitoring.png",
   },
   {
     slug: "systeme-scada-industriel",
@@ -377,6 +398,7 @@ export const products: Product[] = [
     pole: "digital",
     domain: "scada",
     pdfLink: "#",
+    image: "/systeme-scada-industriel.png",
   },
   {
     slug: "jumeau-numerique-installation-industrielle",
@@ -394,6 +416,7 @@ export const products: Product[] = [
     pole: "digital",
     domain: "simulation",
     pdfLink: "#",
+    image: "/jumeau-numerique-installation-industrielle.png",
   },
 
   // ── POLE: nuclear ─────────────────────────────────────────────────────
@@ -413,6 +436,7 @@ export const products: Product[] = [
     pole: "nuclear",
     domain: "detection",
     pdfLink: "#",
+    image: "/detecteur-radioactivite.png",
   },
   {
     slug: "systeme-dosimetrie",
@@ -430,6 +454,7 @@ export const products: Product[] = [
     pole: "nuclear",
     domain: "dosimetry",
     pdfLink: "#",
+    image: "/systeme-dosimetrie.png",
   },
 
   // ── POLE: training ────────────────────────────────────────────────────
@@ -449,6 +474,7 @@ export const products: Product[] = [
     pole: "training",
     domain: "elearning",
     pdfLink: "#",
+    image: "/kit-formation-elearning-lms.png",
   },
   {
     slug: "simulateur-process-industriel",
@@ -466,5 +492,6 @@ export const products: Product[] = [
     pole: "training",
     domain: "simulation",
     pdfLink: "#",
+    image: "/simulateur-process-industriel.png",
   },
 ];

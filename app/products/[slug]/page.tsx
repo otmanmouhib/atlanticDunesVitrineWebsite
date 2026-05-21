@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import QuoteButton from "@/components/QuoteButton";
 import Link from "next/link";
@@ -36,13 +37,25 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
-          <div>
+          <div className="space-y-8">
+            {product.image && (
+              <div className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-sm">
+                <Image
+                  src={product.image}
+                  alt={product.title}
+                  width={1200}
+                  height={700}
+                  className="h-72 w-full object-cover"
+                />
+              </div>
+            )}
+
             <div className="rounded-3xl bg-slate-50 p-6">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Description</p>
               <p className="mt-4 text-base leading-8 text-slate-700">{product.description}</p>
             </div>
 
-            <div className="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
               <div className="border-b border-slate-200 bg-slate-100 px-6 py-4">
                 <h2 className="text-lg font-semibold text-slate-950">Spécifications clés</h2>
               </div>
@@ -58,7 +71,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
               </div>
             </div>
 
-            <div className="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
               <h2 className="text-lg font-semibold text-slate-950">Performance attendue</h2>
               <p className="mt-4 text-sm leading-7 text-slate-700">{product.performance}</p>
             </div>

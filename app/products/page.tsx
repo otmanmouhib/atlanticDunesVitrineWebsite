@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import FilterChips from "@/components/FilterChips";
@@ -68,7 +69,18 @@ export default function ProductsPage() {
             href={`/products/${product.slug}`}
             className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:border-brand-400 hover:shadow-lg"
           >
-            <div className="bg-slate-100 p-8 text-center text-slate-500">Visuel produit</div>
+            <div className="relative h-56 w-full overflow-hidden bg-slate-100">
+              {product.image ? (
+                <Image
+                  src={product.image}
+                  alt={product.title}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-slate-500">Visuel produit</div>
+              )}
+            </div>
             <div className="p-6">
               <div className="flex flex-wrap items-center gap-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">{getPoleLabel(product.pole)}</p>
