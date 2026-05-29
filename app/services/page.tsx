@@ -1,26 +1,20 @@
-"use client";
+export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { useMemo } from "react";
-import { useSearchParams } from "next/navigation";
 import { services } from "@/data/services";
 import { getDomainLabel } from "@/data/domains";
 import { getPoleLabel } from "@/data/poles";
 
-export default function ServicesPage() {
-  const searchParams = useSearchParams();
-  const selectedPole = searchParams.get("pole") ?? "all";
-  const selectedDomain = searchParams.get("domain") ?? "all";
+export default function ServicesPage({
+  searchParams,
+}: {
+  searchParams: { pole?: string; domain?: string };
+}) {
+  const selectedPole = searchParams?.pole ?? "all";
+  const selectedDomain = searchParams?.domain ?? "all";
 
-  const poleFiltered = useMemo(
-    () => (selectedPole === "all" ? services : services.filter((s) => s.pole === selectedPole)),
-    [selectedPole]
-  );
-
-  const filtered = useMemo(
-    () => (selectedDomain === "all" ? poleFiltered : poleFiltered.filter((s) => s.domain === selectedDomain)),
-    [poleFiltered, selectedDomain]
-  );
+  const poleFiltered = selectedPole === "all" ? services : services.filter((s) => s.pole === selectedPole);
+  const filtered = selectedDomain === "all" ? poleFiltered : poleFiltered.filter((s) => s.domain === selectedDomain);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">

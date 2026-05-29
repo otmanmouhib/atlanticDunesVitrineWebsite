@@ -1,27 +1,21 @@
-"use client";
+export const dynamic = "force-dynamic";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
-import { useSearchParams } from "next/navigation";
 import { products } from "@/data/products";
 import { getDomainLabel } from "@/data/domains";
 import { getPoleLabel } from "@/data/poles";
 
-export default function ProductsPage() {
-  const searchParams = useSearchParams();
-  const selectedPole = searchParams.get("pole") ?? "all";
-  const selectedDomain = searchParams.get("domain") ?? "all";
+export default function ProductsPage({
+  searchParams,
+}: {
+  searchParams: { pole?: string; domain?: string };
+}) {
+  const selectedPole = searchParams?.pole ?? "all";
+  const selectedDomain = searchParams?.domain ?? "all";
 
-  const poleFiltered = useMemo(
-    () => (selectedPole === "all" ? products : products.filter((p) => p.pole === selectedPole)),
-    [selectedPole]
-  );
-
-  const filtered = useMemo(
-    () => (selectedDomain === "all" ? poleFiltered : poleFiltered.filter((p) => p.domain === selectedDomain)),
-    [poleFiltered, selectedDomain]
-  );
+  const poleFiltered = selectedPole === "all" ? products : products.filter((p) => p.pole === selectedPole);
+  const filtered = selectedDomain === "all" ? poleFiltered : poleFiltered.filter((p) => p.domain === selectedDomain);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">

@@ -21,14 +21,12 @@ type MenuCategory = {
 };
 
 function buildMenu(items: Array<{ pole: string; domain: string }>): MenuCategory[] {
-  return poles
-    .map((pole) => {
-      const domains = Array.from(
-        new Set(items.filter((item) => item.pole === pole.slug).map((item) => item.domain))
-      );
-      return domains.length > 0 ? { pole, domains } : null;
-    })
-    .filter((item): item is MenuCategory => item !== null);
+  return poles.flatMap((pole) => {
+    const domains = Array.from(
+      new Set(items.filter((item) => item.pole === pole.slug).map((item) => item.domain))
+    );
+    return domains.length > 0 ? [{ pole, domains }] : [];
+  });
 }
 
 const productCategories = buildMenu(products);
