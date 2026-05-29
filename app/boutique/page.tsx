@@ -1,47 +1,76 @@
+import Image from "next/image";
 import Link from "next/link";
+import { boutiqueItems } from "@/data/boutique";
+import { getDomainLabel } from "@/data/domains";
+import { getPoleLabel } from "@/data/poles";
 
-export default function BoutiquePage() {
+export const dynamic = "force-dynamic";
+
+export default function BoutiquePage({
+  searchParams,
+}: {
+  searchParams: { pole?: string; domain?: string };
+}) {
+  const selectedPole = searchParams.pole ?? "all";
+  const selectedDomain = searchParams.domain ?? "all";
+
+  const poleFiltered =
+    selectedPole === "all"
+      ? boutiqueItems
+      : boutiqueItems.filter((item) => item.pole === selectedPole);
+
+  const filtered =
+    selectedDomain === "all"
+      ? poleFiltered
+      : poleFiltered.filter((item) => item.domain === selectedDomain);
+
   return (
-    <div className="relative overflow-hidden bg-slate-50 py-14 sm:py-16">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-brand-50 to-transparent" />
-      <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
-        <div className="relative z-10 rounded-[2rem] border border-slate-200/90 bg-white/95 p-10 shadow-[0_30px_90px_rgba(15,23,42,0.12)] backdrop-blur-sm sm:p-12">
+    <div className="bg-slate-50 py-14">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-[2rem] border border-slate-200/90 bg-white/95 p-10 shadow-[0_30px_90px_rgba(15,23,42,0.12)] backdrop-blur-sm sm:p-12">
           <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Boutique</p>
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-slate-950 sm:text-5xl">
-            Boutique Atlantic Dunes
+            Catalogue d’équipements et accessoires industriels
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-            Notre espace de vente de composants et accessoires pour systèmes industriels est en préparation.
-            Revenez bientôt pour découvrir nos offres de pièces détachées, modules et accessoires.
+            Découvrez des équipements liés aux pôles Atlantic Dunes : pompes, panneaux solaires, batteries, capteurs, onduleurs et solutions de supervision.
+            Chaque article affiche son prix, sa disponibilité et toutes les spécifications techniques dont vous avez besoin.
           </p>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-3">
-            {[
-              { label: "Composants", value: "En préparation" },
-              { label: "Accessoires", value: "Bientôt disponibles" },
-              { label: "Systèmes", value: "Catalogue à venir" },
-            ].map((item) => (
-              <div key={item.label} className="rounded-3xl border border-slate-200 bg-slate-50 p-5 text-left shadow-sm">
-                <p className="text-xs uppercase tracking-[0.24em] text-slate-500">{item.label}</p>
-                <p className="mt-3 text-lg font-semibold text-slate-950">{item.value}</p>
-              </div>
+          <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((item) => (
+              <Link
+                key={item.slug}
+                href={`/boutique/${item.slug}`}
+                className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:border-brand-400 hover:shadow-lg"
+              >
+                <div className="relative h-56 w-full overflow-hidden bg-slate-100">
+                  <Image src={item.image} alt={item.title} fill className="object-cover" />
+                </div>
+                <div className="p-6">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">{getPoleLabel(item.pole)}</p>
+                    <span className="text-xs text-slate-300">/</span>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-700">{getDomainLabel(item.domain)}</p>
+                  </div>
+                  <h2 className="mt-4 text-xl font-semibold text-slate-950 group-hover:text-brand-700">{item.title}</h2>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">{item.shortDescription}</p>
+                  <div className="mt-5 flex items-center justify-between gap-4 text-sm">
+                    <p className="font-semibold text-slate-950">{item.price}</p>
+                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${item.inStock ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
+                      {item.availability}
+                    </span>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
 
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700"
-            >
-              Nous contacter
-            </Link>
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-brand-300 hover:text-brand-700"
-            >
-              Retour à l’accueil
-            </Link>
-          </div>
+          {filtered.length === 0 && (
+            <div className="mt-12 rounded-3xl border border-slate-200 bg-white p-8 text-center text-slate-700 shadow-sm">
+              Aucun article trouvé pour ce filtre. Essayez un autre pôle ou domaine.
+            </div>
+          )}
         </div>
       </div>
     </div>

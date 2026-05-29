@@ -29,11 +29,6 @@ export default function ServicesPage({
             installations industrielles sur 7 pôles d&apos;expertise.
           </p>
         </div>
-        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm leading-6 text-slate-600">
-            Parcourez nos services par pôle et domaine avec le menu Services en haut de page.
-          </p>
-        </div>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">

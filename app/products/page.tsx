@@ -30,11 +30,6 @@ export default function ProductsPage({
             nucléaire et formation.
           </p>
         </div>
-        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm leading-6 text-slate-600">
-            Parcourez nos produits par pôle et domaine avec le menu Produits en haut de page.
-          </p>
-        </div>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">

@@ -6,9 +6,9 @@ import { poles } from "@/data/poles";
 import { getDomainLabel } from "@/data/domains";
 import { products } from "@/data/products";
 import { services } from "@/data/services";
+import { boutiqueItems } from "@/data/boutique";
 
 const otherNavItems = [
-  { label: "Boutique", href: "/boutique" },
   { label: "News", href: "/news" },
   { label: "Références", href: "/references" },
   { label: "Certifications", href: "/certifications" },
@@ -31,18 +31,21 @@ function buildMenu(items: Array<{ pole: string; domain: string }>): MenuCategory
 
 const productCategories = buildMenu(products);
 const serviceCategories = buildMenu(services);
+const boutiqueCategories = buildMenu(boutiqueItems);
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [openMenu, setOpenMenu] = useState<"none" | "products" | "services">("none");
+  const [openMenu, setOpenMenu] = useState<"none" | "products" | "services" | "boutique">("none");
   const [openServicePole, setOpenServicePole] = useState<string | null>(null);
   const [openProductPole, setOpenProductPole] = useState<string | null>(null);
+  const [openBoutiquePole, setOpenBoutiquePole] = useState<string | null>(null);
 
-  const toggleMenu = (menu: "products" | "services") => {
+  const toggleMenu = (menu: "products" | "services" | "boutique") => {
     setOpenMenu((current) => {
       const nextMenu = current === menu ? "none" : menu;
       if (nextMenu !== "services") setOpenServicePole(null);
       if (nextMenu !== "products") setOpenProductPole(null);
+      if (nextMenu !== "boutique") setOpenBoutiquePole(null);
       return nextMenu;
     });
   };
@@ -55,10 +58,15 @@ export default function Header() {
     setOpenProductPole((current) => (current === poleSlug ? null : poleSlug));
   };
 
+  const toggleBoutiquePole = (poleSlug: string) => {
+    setOpenBoutiquePole((current) => (current === poleSlug ? null : poleSlug));
+  };
+
   const closeAllMenus = () => {
     setOpenMenu("none");
     setOpenServicePole(null);
     setOpenProductPole(null);
+    setOpenBoutiquePole(null);
     setIsOpen(false);
   };
 
@@ -199,6 +207,70 @@ export default function Header() {
               </div>
             )}
           </div>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => toggleMenu("boutique")}
+              className="inline-flex items-center gap-1 text-sm font-medium text-slate-700 transition hover:text-brand-700"
+            >
+              Boutique
+              <span aria-hidden>{openMenu === "boutique" ? "▴" : "▾"}</span>
+            </button>
+
+            {openMenu === "boutique" && (
+              <div className="absolute left-0 top-full z-50 mt-3 w-[min(42rem,100vw)] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
+                <div className="grid gap-6 p-6 sm:grid-cols-[240px_1fr]">
+                  <div className="space-y-4 border-r border-slate-200 pr-6">
+                    <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Boutique</p>
+                    <Link href="/boutique" onClick={closeAllMenus} className="block text-sm font-semibold text-slate-900 hover:text-brand-700">
+                      Voir toute la boutique
+                    </Link>
+                    <p className="text-sm leading-6 text-slate-600">
+                      Parcourez nos équipements et accessoires par pôle et domaine.
+                    </p>
+                  </div>
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    {boutiqueCategories.map((category) => {
+                      const isOpenPole = openBoutiquePole === category.pole.slug;
+                      return (
+                        <div key={category.pole.slug}>
+                          <button
+                            type="button"
+                            onClick={() => toggleBoutiquePole(category.pole.slug)}
+                            className="flex w-full items-center justify-between rounded-2xl px-3 py-2 text-left text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                          >
+                            {category.pole.label}
+                            <span aria-hidden>{isOpenPole ? "▴" : "▾"}</span>
+                          </button>
+                          {isOpenPole && (
+                            <div className="mt-3 space-y-2">
+                              <Link
+                                href={`/boutique?pole=${category.pole.slug}`}
+                                onClick={closeAllMenus}
+                                className="block rounded-2xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-700"
+                              >
+                                {`Tous les ${category.pole.label.toLowerCase()}`}
+                              </Link>
+                              {category.domains.map((domain) => (
+                                <Link
+                                  key={domain}
+                                  href={`/boutique?pole=${category.pole.slug}&domain=${domain}`}
+                                  onClick={closeAllMenus}
+                                  className="block rounded-2xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-700"
+                                >
+                                  {getDomainLabel(domain)}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
           {otherNavItems.map((item) => (
             <Link key={item.href} href={item.href} className="text-sm font-medium text-slate-700 hover:text-brand-700">
@@ -307,6 +379,50 @@ export default function Header() {
                           <Link
                             key={domain}
                             href={`/products?pole=${category.pole.slug}&domain=${domain}`}
+                            className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-white"
+                            onClick={closeAllMenus}
+                          >
+                            {getDomainLabel(domain)}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <Link href="/boutique" className="block rounded-xl px-3 py-2 text-base font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-700" onClick={closeAllMenus}>
+              Boutique
+            </Link>
+            <div className="space-y-2 rounded-2xl bg-slate-50 p-3 text-sm text-slate-700">
+              <Link href="/boutique" className="block rounded-xl px-3 py-2 hover:bg-white" onClick={closeAllMenus}>
+                Toute la boutique
+              </Link>
+              {boutiqueCategories.map((category) => {
+                const isOpenPole = openBoutiquePole === category.pole.slug;
+                return (
+                  <div key={category.pole.slug} className="space-y-1">
+                    <button
+                      type="button"
+                      onClick={() => toggleBoutiquePole(category.pole.slug)}
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-white"
+                    >
+                      {category.pole.label}
+                      <span aria-hidden>{isOpenPole ? "▴" : "▾"}</span>
+                    </button>
+                    {isOpenPole && (
+                      <div className="space-y-1 pl-3">
+                        <Link
+                          href={`/boutique?pole=${category.pole.slug}`}
+                          className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-white"
+                          onClick={closeAllMenus}
+                        >
+                          {`Tous les ${category.pole.label.toLowerCase()}`}
+                        </Link>
+                        {category.domains.map((domain) => (
+                          <Link
+                            key={domain}
+                            href={`/boutique?pole=${category.pole.slug}&domain=${domain}`}
                             className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-white"
                             onClick={closeAllMenus}
                           >
