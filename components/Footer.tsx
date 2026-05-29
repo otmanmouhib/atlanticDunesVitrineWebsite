@@ -3,7 +3,7 @@ import { domainTags } from "@/data/domains";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-slate-950 text-slate-300">
+    <footer className="bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-3">
           <div>

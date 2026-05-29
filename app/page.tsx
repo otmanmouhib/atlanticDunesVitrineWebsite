@@ -1,20 +1,5 @@
 import Link from "next/link";
 import QuoteButton from "@/components/QuoteButton";
-import { products } from "@/data/products";
-import { services } from "@/data/services";
-import { getDomainLabel } from "@/data/domains";
-
-function selectFeaturedByDistinctPoles<T extends { pole: string }>(items: T[], count = 3) {
-  const seen = new Set<string>();
-  return items.filter((item) => {
-    if (seen.has(item.pole)) return false;
-    seen.add(item.pole);
-    return true;
-  }).slice(0, count);
-}
-
-const featuredServices = selectFeaturedByDistinctPoles(services, 3);
-const featuredProducts = selectFeaturedByDistinctPoles(products, 3);
 
 const strengths = [
   {
@@ -183,88 +168,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── BODY ──────────────────────────────────────────────────────── */}
-      <div className="bg-slate-50">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-
-        {/* ── SERVICES PHARES ───────────────────────────────────────── */}
-        <section className="border-b border-slate-200 py-20">
-          <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-brand-700">
-                <span className="h-1.5 w-1.5 rounded-full bg-brand-500" aria-hidden="true" />
-                Services phares
-              </span>
-              <h2 className="mt-4 text-2xl font-extrabold text-slate-950 sm:text-3xl">
-                Solutions concrètes pour vos enjeux terrain
-              </h2>
-            </div>
-            <Link href="/services" className="shrink-0 text-sm font-semibold text-brand-700 transition hover:text-brand-500">
-              Voir tous les services →
-            </Link>
-          </div>
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {featuredServices.map((service) => (
-              <Link
-                key={service.slug}
-                href={`/services/${service.slug}`}
-                className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-brand-300 hover:shadow-md"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-brand-700">
-                    {getDomainLabel(service.domain)}
-                  </span>
-                  <span className="text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-brand-500" aria-hidden="true">→</span>
-                </div>
-                <h3 className="mt-4 text-base font-bold leading-snug text-slate-950 transition group-hover:text-brand-700">{service.title}</h3>
-                <p className="mt-2 flex-1 text-sm leading-6 text-slate-500">{service.shortDescription}</p>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* ── PRODUITS PHARES ───────────────────────────────────────── */}
-        <section className="py-20">
-          <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-accent-200 bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-accent-700">
-                <span className="h-1.5 w-1.5 rounded-full bg-accent-500" aria-hidden="true" />
-                Produits sélectionnés
-              </span>
-              <h2 className="mt-4 text-2xl font-extrabold text-slate-950 sm:text-3xl">Installations clé en main</h2>
-            </div>
-            <Link href="/products" className="shrink-0 text-sm font-semibold text-brand-700 transition hover:text-brand-500">
-              Découvrir tous les produits →
-            </Link>
-          </div>
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {featuredProducts.map((product) => (
-              <Link
-                key={product.slug}
-                href={`/products/${product.slug}`}
-                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-brand-300 hover:shadow-md"
-              >
-                {/* Image placeholder with domain-tinted background */}
-                <div className="relative flex h-40 items-center justify-center bg-brand-50">
-                  <span className="text-xs font-medium text-brand-300">Visuel produit</span>
-                  <span className="absolute right-4 top-4 rounded-full border border-brand-100 bg-white px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-brand-700">
-                    {getDomainLabel(product.domain)}
-                  </span>
-                </div>
-                <div className="p-6">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-sm font-bold leading-snug text-slate-950 transition group-hover:text-brand-700">{product.title}</h3>
-                    <span className="mt-0.5 shrink-0 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-brand-500" aria-hidden="true">→</span>
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">{product.shortDescription}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        </div>
-      </div>
     </div>
   );
 }
