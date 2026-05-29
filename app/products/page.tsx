@@ -2,36 +2,26 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import FilterChips from "@/components/FilterChips";
-import PoleTabs from "@/components/PoleTabs";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { products } from "@/data/products";
 import { getDomainLabel } from "@/data/domains";
 import { getPoleLabel } from "@/data/poles";
 
 export default function ProductsPage() {
-  const [selectedPole, setSelectedPole] = useState("all");
-  const [selectedDomain, setSelectedDomain] = useState("all");
+  const searchParams = useSearchParams();
+  const selectedPole = searchParams.get("pole") ?? "all";
+  const selectedDomain = searchParams.get("domain") ?? "all";
 
   const poleFiltered = useMemo(
     () => (selectedPole === "all" ? products : products.filter((p) => p.pole === selectedPole)),
     [selectedPole]
   );
 
-  const availableDomains = useMemo(() => {
-    const domains = Array.from(new Set(poleFiltered.map((p) => p.domain)));
-    return ["all", ...domains];
-  }, [poleFiltered]);
-
   const filtered = useMemo(
     () => (selectedDomain === "all" ? poleFiltered : poleFiltered.filter((p) => p.domain === selectedDomain)),
     [poleFiltered, selectedDomain]
   );
-
-  function handlePoleChange(pole: string) {
-    setSelectedPole(pole);
-    setSelectedDomain("all");
-  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -46,19 +36,10 @@ export default function ProductsPage() {
             nucléaire et formation.
           </p>
         </div>
-        <div className="mt-8 space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div>
-            <p className="text-sm font-semibold text-slate-900">Filtrer par pôle</p>
-            <div className="mt-3">
-              <PoleTabs selectedPole={selectedPole} onPoleChange={handlePoleChange} />
-            </div>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-slate-900">Filtrer par domaine</p>
-            <div className="mt-3">
-              <FilterChips tags={availableDomains} selectedTag={selectedDomain} onTagChange={setSelectedDomain} />
-            </div>
-          </div>
+        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="text-sm leading-6 text-slate-600">
+            Parcourez nos produits par pôle et domaine avec le menu Produits en haut de page.
+          </p>
         </div>
       </div>
 
@@ -71,12 +52,7 @@ export default function ProductsPage() {
           >
             <div className="relative h-56 w-full overflow-hidden bg-slate-100">
               {product.image ? (
-                <Image
-                  src={product.image}
-                  alt={product.title}
-                  fill
-                  className="object-cover"
-                />
+                <Image src={product.image} alt={product.title} fill className="object-cover" />
               ) : (
                 <div className="flex h-full items-center justify-center text-slate-500">Visuel produit</div>
               )}
@@ -96,7 +72,7 @@ export default function ProductsPage() {
 
       {filtered.length === 0 && (
         <div className="mt-12 rounded-3xl border border-slate-200 bg-white p-8 text-center text-slate-700 shadow-sm">
-          Aucun produit trouvé pour ce filtre. Sélectionnez un autre pôle ou domaine.
+          Aucun produit trouvé pour ce filtre. Sélectionnez une autre catégorie depuis le menu Produits.
         </div>
       )}
     </div>

@@ -1,36 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import FilterChips from "@/components/FilterChips";
-import PoleTabs from "@/components/PoleTabs";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { services } from "@/data/services";
 import { getDomainLabel } from "@/data/domains";
 import { getPoleLabel } from "@/data/poles";
 
 export default function ServicesPage() {
-  const [selectedPole, setSelectedPole] = useState("all");
-  const [selectedDomain, setSelectedDomain] = useState("all");
+  const searchParams = useSearchParams();
+  const selectedPole = searchParams.get("pole") ?? "all";
+  const selectedDomain = searchParams.get("domain") ?? "all";
 
   const poleFiltered = useMemo(
     () => (selectedPole === "all" ? services : services.filter((s) => s.pole === selectedPole)),
     [selectedPole]
   );
 
-  const availableDomains = useMemo(() => {
-    const domains = Array.from(new Set(poleFiltered.map((s) => s.domain)));
-    return ["all", ...domains];
-  }, [poleFiltered]);
-
   const filtered = useMemo(
     () => (selectedDomain === "all" ? poleFiltered : poleFiltered.filter((s) => s.domain === selectedDomain)),
     [poleFiltered, selectedDomain]
   );
-
-  function handlePoleChange(pole: string) {
-    setSelectedPole(pole);
-    setSelectedDomain("all");
-  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -45,19 +35,10 @@ export default function ServicesPage() {
             installations industrielles sur 7 pôles d&apos;expertise.
           </p>
         </div>
-        <div className="mt-8 space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div>
-            <p className="text-sm font-semibold text-slate-900">Filtrer par pôle</p>
-            <div className="mt-3">
-              <PoleTabs selectedPole={selectedPole} onPoleChange={handlePoleChange} />
-            </div>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-slate-900">Filtrer par domaine</p>
-            <div className="mt-3">
-              <FilterChips tags={availableDomains} selectedTag={selectedDomain} onTagChange={setSelectedDomain} />
-            </div>
-          </div>
+        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="text-sm leading-6 text-slate-600">
+            Parcourez nos services par pôle et domaine avec le menu Services en haut de page.
+          </p>
         </div>
       </div>
 
@@ -81,7 +62,7 @@ export default function ServicesPage() {
 
       {filtered.length === 0 && (
         <div className="mt-12 rounded-3xl border border-slate-200 bg-white p-8 text-center text-slate-700 shadow-sm">
-          Aucun service trouvé pour ce filtre. Sélectionnez un autre pôle ou domaine.
+          Aucun service trouvé pour ce filtre. Sélectionnez une autre catégorie depuis le menu Services.
         </div>
       )}
     </div>
