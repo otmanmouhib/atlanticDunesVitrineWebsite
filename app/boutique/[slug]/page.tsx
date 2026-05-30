@@ -109,9 +109,15 @@ export default function BoutiqueProductPage({ params }: { params: { slug: string
                     <Link
                       key={relatedItem.slug}
                       href={`/boutique/${relatedItem.slug}`}
-                      className="block rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 transition hover:border-brand-400 hover:bg-brand-50"
+                      className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-white p-3 text-left transition hover:border-brand-400 hover:bg-brand-50"
                     >
-                      {relatedItem.title}
+                      <div className="relative h-16 w-16 overflow-hidden rounded-2xl bg-slate-100">
+                        <Image src={relatedItem.image} alt={relatedItem.title} fill className="object-cover" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-950">{relatedItem.title}</p>
+                        <p className="mt-1 text-xs text-slate-500">{relatedItem.price}</p>
+                      </div>
                     </Link>
                   ))
                 ) : (

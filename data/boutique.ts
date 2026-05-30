@@ -36,7 +36,7 @@ export const boutiqueItems: BoutiqueItem[] = [
     inStock: true,
     pole: "env",
     domain: "water",
-    image: "/boutique/pompe-centrifuge-grundfos-1500w.jpg",
+    image: "/Pompe-centrifuge-industrielle-Grundfos.png",
   },
   {
     slug: "filtre-cartouche-industrie-50-micron",
@@ -60,7 +60,7 @@ export const boutiqueItems: BoutiqueItem[] = [
     inStock: false,
     pole: "env",
     domain: "water",
-    image: "/boutique/filtre-cartouche-50-micron.jpg",
+    image: "/Filtre-artouche-industriel.png",
   },
   {
     slug: "unite-metalique-depoussierage-compacte",
@@ -84,7 +84,7 @@ export const boutiqueItems: BoutiqueItem[] = [
     inStock: true,
     pole: "env",
     domain: "air",
-    image: "/boutique/unite-depoussierage-compacte.jpg",
+    image: "/Unite-compacte-de-depoussierage.png",
   },
   {
     slug: "kit-panneaux-photovoltaiques-440w",
