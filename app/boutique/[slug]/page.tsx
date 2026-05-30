@@ -24,8 +24,8 @@ export default function BoutiqueProductPage({ params }: { params: { slug: string
   const related = boutiqueItems.filter((other) => other.pole === item.pole && other.slug !== item.slug).slice(0, 3);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mb-10 flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+    <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mb-10 flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-accent-700">Article boutique</p>
@@ -37,13 +37,15 @@ export default function BoutiqueProductPage({ params }: { params: { slug: string
         <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
           <div className="space-y-8">
             <div className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-sm">
-              <Image
-                src={item.image}
-                alt={item.title}
-                width={1200}
-                height={700}
-                className="h-72 w-full object-cover"
-              />
+              <div className="relative h-[220px] w-full overflow-hidden rounded-3xl sm:h-[320px] lg:h-[420px]">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
+                  className="object-cover"
+                />
+              </div>
             </div>
 
             <div className="rounded-3xl bg-slate-50 p-6">
