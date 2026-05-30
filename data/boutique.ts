@@ -9,8 +9,21 @@ export type BoutiqueItem = {
   availability: string;
   inStock: boolean;
   pole: string;
+  poleId: string;
   domain: string;
+  domainId: string;
   image: string;
+  sku?: string;
+  unitPrice?: number;
+  currency?: string;
+  inventoryCount?: number;
+  gallery?: string[];
+  warranty?: string;
+  tags?: string[];
+  featured?: boolean;
+  status?: "draft" | "published" | "archived";
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export const boutiqueItems: BoutiqueItem[] = [
@@ -35,8 +48,24 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock",
     inStock: true,
     pole: "env",
+    poleId: "env",
     domain: "water",
+    domainId: "water",
     image: "/Pompe-centrifuge-industrielle-Grundfos.png",
+    sku: "AD-BOUT-WTR-PMP-1500",
+    unitPrice: 3450,
+    currency: "EUR",
+    inventoryCount: 8,
+    gallery: [
+      "/boutique/Pompe-centrifuge-industrielle-Grundfos.png",
+      "/boutique/Pompe-centrifuge-industrielle-Grundfos-2.png",
+    ],
+    warranty: "2 ans",
+    tags: ["pompe", "eau", "traitement"],
+    featured: true,
+    status: "published",
+    createdAt: "2026-03-12",
+    updatedAt: "2026-05-18",
   },
   {
     slug: "filtre-cartouche-industrie-50-micron",
@@ -59,7 +88,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "Sur commande",
     inStock: false,
     pole: "env",
+    poleId: "env",
     domain: "water",
+    domainId: "water",
     image: "/Filtre-artouche-industriel.png",
   },
   {
@@ -83,7 +114,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock",
     inStock: true,
     pole: "env",
+    poleId: "env",
     domain: "air",
+    domainId: "air",
     image: "/Unite-compacte-de-depoussierage.png",
   },
   {
@@ -107,7 +140,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock",
     inStock: true,
     pole: "energy",
+    poleId: "energy",
     domain: "solar-pv",
+    domainId: "solar-pv",
     image: "/boutique/panneau-photovoltaique-440w.jpg",
   },
   {
@@ -131,7 +166,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "Sur commande",
     inStock: false,
     pole: "energy",
+    poleId: "energy",
     domain: "power",
+    domainId: "power",
     image: "/boutique/onduleur-hybride-10kw.jpg",
   },
   {
@@ -155,7 +192,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock limité",
     inStock: true,
     pole: "energy",
+    poleId: "energy",
     domain: "storage",
+    domainId: "storage",
     image: "/boutique/batterie-lfp-20kwh.jpg",
   },
   {
@@ -179,7 +218,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock",
     inStock: true,
     pole: "safety",
+    poleId: "safety",
     domain: "gas",
+    domainId: "gas",
     image: "/boutique/detecteur-gaz-multi-capteurs.jpg",
   },
   {
@@ -203,7 +244,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "Sur commande",
     inStock: false,
     pole: "safety",
+    poleId: "safety",
     domain: "cctv",
+    domainId: "cctv",
     image: "/boutique/camera-thermique-surveillance.jpg",
   },
   {
@@ -227,7 +270,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock",
     inStock: true,
     pole: "elec",
+    poleId: "elec",
     domain: "distribution",
+    domainId: "distribution",
     image: "/boutique/kit-connexion-mcc.jpg",
   },
   {
@@ -251,7 +296,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock",
     inStock: true,
     pole: "elec",
+    poleId: "elec",
     domain: "automation",
+    domainId: "automation",
     image: "/boutique/plateau-automatisme-plc.jpg",
   },
   {
@@ -275,7 +322,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "Sur commande",
     inStock: false,
     pole: "elec",
+    poleId: "elec",
     domain: "power",
+    domainId: "power",
     image: "/boutique/ups-20kva.jpg",
   },
   {
@@ -299,7 +348,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock limité",
     inStock: true,
     pole: "digital",
+    poleId: "digital",
     domain: "iot",
+    domainId: "iot",
     image: "/boutique/passerelle-iot-lorawan.jpg",
   },
   {
@@ -323,7 +374,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock",
     inStock: true,
     pole: "digital",
+    poleId: "digital",
     domain: "ai",
+    domainId: "ai",
     image: "/boutique/capteur-vibration-wireless.jpg",
   },
   {
@@ -347,7 +400,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "Sur commande",
     inStock: false,
     pole: "digital",
+    poleId: "digital",
     domain: "scada",
+    domainId: "scada",
     image: "/boutique/console-scada-22.jpg",
   },
   {
@@ -371,7 +426,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock" ,
     inStock: true,
     pole: "nuclear",
+    poleId: "nuclear",
     domain: "detection",
+    domainId: "detection",
     image: "/boutique/detecteur-radioactivite-portable.jpg",
   },
   {
@@ -395,7 +452,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "Sur commande",
     inStock: false,
     pole: "nuclear",
+    poleId: "nuclear",
     domain: "dosimetry",
+    domainId: "dosimetry",
     image: "/boutique/dosimetre-electronique-personnel.jpg",
   },
   {
@@ -419,7 +478,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "Sur commande",
     inStock: false,
     pole: "nuclear",
+    poleId: "nuclear",
     domain: "radioprotection",
+    domainId: "radioprotection",
     image: "/boutique/porte-radioprotection.jpg",
   },
   {
@@ -443,7 +504,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock limité",
     inStock: true,
     pole: "training",
+    poleId: "training",
     domain: "coaching",
+    domainId: "coaching",
     image: "/boutique/kit-formation-hse.jpg",
   },
   {
@@ -467,7 +530,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "Sur commande",
     inStock: false,
     pole: "training",
+    poleId: "training",
     domain: "elearning",
+    domainId: "elearning",
     image: "/boutique/station-simulation-process.jpg",
   },
   {
@@ -491,7 +556,9 @@ export const boutiqueItems: BoutiqueItem[] = [
     availability: "En stock",
     inStock: true,
     pole: "training",
+    poleId: "training",
     domain: "nuclear",
+    domainId: "nuclear",
     image: "/boutique/valise-mesure-radioprotection.jpg",
   },
 ];

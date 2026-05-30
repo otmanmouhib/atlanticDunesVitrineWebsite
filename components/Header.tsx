@@ -3,11 +3,20 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { poles, getPoleLabel } from "@/data/poles";
-import { getDomainLabel } from "@/data/domains";
-import { products } from "@/data/products";
-import { services } from "@/data/services";
-import { boutiqueItems } from "@/data/boutique";
+import type { Pole, DomainTag } from "@/lib/db";
+
+type MenuCategory = {
+  pole: { slug: string; label: string };
+  domains: Array<{ slug: string; label: string }>;
+};
+
+type HeaderProps = {
+  serviceCategories: MenuCategory[];
+  productCategories: MenuCategory[];
+  boutiqueCategories: MenuCategory[];
+  poles: Pole[];
+  domains: DomainTag[];
+};
 
 const otherNavItems = [
   { label: "News", href: "/news" },
@@ -16,25 +25,19 @@ const otherNavItems = [
   { label: "Qui sommes-nous", href: "/about" },
 ];
 
-type MenuCategory = {
-  pole: { slug: string; label: string };
-  domains: string[];
+const getLabel = (slug: string, list: Array<{ slug: string; label: string }>) => {
+  return list.find((item) => item.slug === slug)?.label ?? slug;
 };
 
-function buildMenu(items: Array<{ pole: string; domain: string }>): MenuCategory[] {
-  return poles.flatMap((pole) => {
-    const domains = Array.from(
-      new Set(items.filter((item) => item.pole === pole.slug).map((item) => item.domain))
-    );
-    return domains.length > 0 ? [{ pole, domains }] : [];
-  });
+function getPoleLabel(poleId: string, poles: Pole[]) {
+  return getLabel(poleId, poles);
 }
 
-const productCategories = buildMenu(products);
-const serviceCategories = buildMenu(services);
-const boutiqueCategories = buildMenu(boutiqueItems);
+function getDomainLabel(domainId: string, domains: DomainTag[]) {
+  return getLabel(domainId, domains);
+}
 
-export default function Header() {
+export default function Header({ serviceCategories, productCategories, boutiqueCategories, poles, domains }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<"none" | "products" | "services" | "boutique">("none");
   const [openServicePole, setOpenServicePole] = useState<string | null>(null);
@@ -102,16 +105,16 @@ export default function Header() {
     const domain = searchParams.get("domain");
 
     if (segments.length === 1) {
-      if (pole) crumbs.push({ href: `/${section}?pole=${pole}`, label: getPoleLabel(pole) });
-      if (domain) crumbs.push({ href: `/${section}?pole=${pole}&domain=${domain}`, label: getDomainLabel(domain) });
+      if (pole) crumbs.push({ href: `/${section}?pole=${pole}`, label: getPoleLabel(pole, poles) });
+      if (domain) crumbs.push({ href: `/${section}?pole=${pole}&domain=${domain}`, label: getDomainLabel(domain, domains) });
     } else if (segments.length > 1) {
-      if (pole) crumbs.push({ href: `/${section}?pole=${pole}`, label: getPoleLabel(pole) });
-      if (domain) crumbs.push({ href: `/${section}?pole=${pole}&domain=${domain}`, label: getDomainLabel(domain) });
+      if (pole) crumbs.push({ href: `/${section}?pole=${pole}`, label: getPoleLabel(pole, poles) });
+      if (domain) crumbs.push({ href: `/${section}?pole=${pole}&domain=${domain}`, label: getDomainLabel(domain, domains) });
       crumbs.push({ href: pathname, label: "Détail" });
     }
 
     return crumbs;
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, poles, domains]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
@@ -167,12 +170,12 @@ export default function Header() {
                               </Link>
                               {category.domains.map((domain) => (
                                 <Link
-                                  key={domain}
-                                  href={`/services?pole=${category.pole.slug}&domain=${domain}`}
+                                  key={domain.slug}
+                                  href={`/services?pole=${category.pole.slug}&domain=${domain.slug}`}
                                   onClick={closeAllMenus}
                                   className="block rounded-2xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-700"
                                 >
-                                  {getDomainLabel(domain)}
+                                  {domain.label}
                                 </Link>
                               ))}
                             </div>
@@ -232,12 +235,12 @@ export default function Header() {
                               </Link>
                               {category.domains.map((domain) => (
                                 <Link
-                                  key={domain}
-                                  href={`/products?pole=${category.pole.slug}&domain=${domain}`}
+                                  key={domain.slug}
+                                  href={`/products?pole=${category.pole.slug}&domain=${domain.slug}`}
                                   onClick={closeAllMenus}
                                   className="block rounded-2xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-700"
                                 >
-                                  {getDomainLabel(domain)}
+                                  {domain.label}
                                 </Link>
                               ))}
                             </div>
@@ -296,12 +299,12 @@ export default function Header() {
                               </Link>
                               {category.domains.map((domain) => (
                                 <Link
-                                  key={domain}
-                                  href={`/boutique?pole=${category.pole.slug}&domain=${domain}`}
+                                  key={domain.slug}
+                                  href={`/boutique?pole=${category.pole.slug}&domain=${domain.slug}`}
                                   onClick={closeAllMenus}
                                   className="block rounded-2xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-700"
                                 >
-                                  {getDomainLabel(domain)}
+                                  {domain.label}
                                 </Link>
                               ))}
                             </div>
@@ -401,12 +404,12 @@ export default function Header() {
                             </Link>
                             {category.domains.map((domain) => (
                               <Link
-                                key={domain}
-                                href={`/services?pole=${category.pole.slug}&domain=${domain}`}
+                                key={domain.slug}
+                                href={`/services?pole=${category.pole.slug}&domain=${domain.slug}`}
                                 className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-white"
                                 onClick={closeAllMenus}
                               >
-                                {getDomainLabel(domain)}
+                                {domain.label}
                               </Link>
                             ))}
                           </div>
@@ -459,12 +462,12 @@ export default function Header() {
                             </Link>
                             {category.domains.map((domain) => (
                               <Link
-                                key={domain}
-                                href={`/products?pole=${category.pole.slug}&domain=${domain}`}
+                                key={domain.slug}
+                                href={`/products?pole=${category.pole.slug}&domain=${domain.slug}`}
                                 className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-white"
                                 onClick={closeAllMenus}
                               >
-                                {getDomainLabel(domain)}
+                                {domain.label}
                               </Link>
                             ))}
                           </div>
@@ -516,12 +519,12 @@ export default function Header() {
                             </Link>
                             {category.domains.map((domain) => (
                               <Link
-                                key={domain}
-                                href={`/boutique?pole=${category.pole.slug}&domain=${domain}`}
+                                key={domain.slug}
+                                href={`/boutique?pole=${category.pole.slug}&domain=${domain.slug}`}
                                 className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-white"
                                 onClick={closeAllMenus}
                               >
-                                {getDomainLabel(domain)}
+                                {domain.label}
                               </Link>
                             ))}
                           </div>

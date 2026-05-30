@@ -1,7 +1,21 @@
 import Link from "next/link";
-import { domainTags } from "@/data/domains";
+import type { DomainTag, EnterpriseInfo } from "@/lib/db";
 
-export default function Footer() {
+type FooterProps = {
+  domains: DomainTag[];
+  enterpriseInfo?: EnterpriseInfo | null;
+};
+
+const fallbackEnterpriseInfo: EnterpriseInfo = {
+  id: "main",
+  email: "contact@atlantic-dunes.ma",
+  phones: ["+212 6 00 64 43 60", "+212 661 258 388"],
+  fax: "+212 539 311875",
+  addressLines: ["45 Rue Ahmed Chaouki appt n°1", "Centre-Ville Tanger, Maroc"],
+};
+
+export default function Footer({ domains, enterpriseInfo }: FooterProps) {
+  const info = enterpriseInfo ?? fallbackEnterpriseInfo;
   return (
     <footer className="bg-slate-950 text-slate-300">
       <div className="mx-auto max-w-7xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
@@ -15,7 +29,7 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Domaines d&apos;expertise</h4>
             <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-3">
-              {domainTags.map((domain) => (
+              {domains.map((domain) => (
                 <Link
                   key={domain.slug}
                   href={`/services?domain=${domain.slug}`}
@@ -29,11 +43,16 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Contact</h4>
             <div className="mt-4 text-sm leading-7 text-slate-300">
-              <p>contact@atlantic-dunes.ma</p>
-              <p>+212 6 00 64 43 60</p>
-              <p>+212 661 258 388</p>
-              <p>Fax : +212 539 311875</p>
-              <p className="mt-3 text-slate-400">45 Rue Ahmed Chaouki appt n°1 Centre-Ville Tanger, Maroc</p>
+              <p>{info.email}</p>
+              {info.phones.map((phone) => (
+                <p key={phone}>{phone}</p>
+              ))}
+              {info.fax ? <p>Fax : {info.fax}</p> : null}
+              <div className="mt-3 text-slate-400">
+                {info.addressLines.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { newsArticles } from "@/data/news";
+import { getNewsArticleBySlug, getNewsCategories, getNewsCategoryLabel } from "@/lib/db";
 
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString("fr-FR", {
@@ -10,8 +10,12 @@ const formatDate = (date: string) =>
     day: "numeric",
   });
 
-export default function NewsArticlePage({ params }: { params: { slug: string } }) {
-  const article = newsArticles.find((item) => item.slug === params.slug);
+export default async function NewsArticlePage({ params }: { params: { slug: string } }) {
+  const [article, newsCategories] = await Promise.all([
+    getNewsArticleBySlug(params.slug),
+    getNewsCategories(),
+  ]);
+
   if (!article) return notFound();
 
   return (
@@ -23,7 +27,7 @@ export default function NewsArticlePage({ params }: { params: { slug: string } }
             ← Retour aux actualités
           </Link>
           <div className="mt-6 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.28em] text-brand-700">
-            <span>{article.category}</span>
+            <span>{getNewsCategoryLabel(article.categoryId, newsCategories)}</span>
             <span className="text-slate-300">/</span>
             <span className="text-slate-500">{formatDate(article.date)}</span>
           </div>
@@ -33,7 +37,7 @@ export default function NewsArticlePage({ params }: { params: { slug: string } }
           <div className="mt-10 overflow-hidden rounded-[1.5rem] bg-slate-100">
             <div className="relative h-[220px] w-full overflow-hidden rounded-[1.5rem] sm:h-[320px] lg:h-[420px]">
               <Image
-                src={article.image}
+                src={`/api/images/${article.imageId}`}
                 alt={article.title}
                 fill
                 sizes="(max-width: 640px) 100vw, 1200px"

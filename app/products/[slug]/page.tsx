@@ -2,28 +2,24 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import QuoteButton from "@/components/QuoteButton";
 import Link from "next/link";
-import { products } from "@/data/products";
-import { services } from "@/data/services";
-import { getDomainLabel } from "@/data/domains";
-import { getPoleLabel } from "@/data/poles";
+import { getDomainLabel, getPoleLabel, getProducts, getProductBySlug, getServices, getPoles, getDomains } from "@/lib/db";
 
-function getProduct(slug: string) {
-  return products.find((product) => product.slug === slug);
-}
-
-export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.slug }));
-}
-
-export default function ProductPage({ params }: { params: { slug: string } }) {
-  const product = getProduct(params.slug);
+export default async function ProductPage({ params }: { params: { slug: string } }) {
+  const product = await getProductBySlug(params.slug);
 
   if (!product) {
     notFound();
   }
 
-  const related = products.filter((item) => item.pole === product.pole && item.slug !== product.slug).slice(0, 3);
-  const linkedTraining = services.find((s) => s.pole === "training" && s.domain === product.pole);
+  const [relatedProducts, services, poles, domains] = await Promise.all([
+    getProducts(product.poleId),
+    getServices(),
+    getPoles(),
+    getDomains(),
+  ]);
+
+  const related = relatedProducts.filter((item) => item.poleId === product.poleId && item.slug !== product.slug).slice(0, 3);
+  const linkedTraining = services.find((s) => s.poleId === "training" && s.domainId === product.poleId);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -38,10 +34,10 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
 
         <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
           <div className="space-y-8">
-            {product.image && (
+            {product.imageId && (
               <div className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-sm">
                 <Image
-                  src={product.image}
+                  src={`/api/images/${product.imageId}`}
                   alt={product.title}
                   width={1200}
                   height={700}
@@ -80,11 +76,11 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
           <aside className="space-y-6 rounded-3xl border border-slate-200 bg-slate-50 p-6">
             <div>
               <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Pôle</p>
-              <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-700">{getPoleLabel(product.pole)}</p>
+              <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-700">{getPoleLabel(product.poleId, poles)}</p>
             </div>
             <div>
               <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Domaine</p>
-              <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900">{getDomainLabel(product.domain)}</p>
+              <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900">{getDomainLabel(product.domainId, domains)}</p>
             </div>
             <div>
               <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Fiche technique</p>

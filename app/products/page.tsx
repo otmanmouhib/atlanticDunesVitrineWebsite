@@ -2,11 +2,9 @@ export const dynamic = "force-dynamic";
 
 import Image from "next/image";
 import Link from "next/link";
-import { products } from "@/data/products";
-import { getDomainLabel } from "@/data/domains";
-import { getPoleLabel } from "@/data/poles";
+import { getDomainLabel, getPoleLabel, getPoles, getDomains, getProducts } from "@/lib/db";
 
-export default function ProductsPage({
+export default async function ProductsPage({
   searchParams,
 }: {
   searchParams: { pole?: string; domain?: string };
@@ -14,8 +12,12 @@ export default function ProductsPage({
   const selectedPole = searchParams?.pole ?? "all";
   const selectedDomain = searchParams?.domain ?? "all";
 
-  const poleFiltered = selectedPole === "all" ? products : products.filter((p) => p.pole === selectedPole);
-  const filtered = selectedDomain === "all" ? poleFiltered : poleFiltered.filter((p) => p.domain === selectedDomain);
+  const [products, poles, domains] = await Promise.all([
+    getProducts(selectedPole === "all" ? undefined : selectedPole, selectedDomain === "all" ? undefined : selectedDomain),
+    getPoles(),
+    getDomains(),
+  ]);
+  const filtered = products;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -40,17 +42,17 @@ export default function ProductsPage({
             className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:border-brand-400 hover:shadow-lg"
           >
             <div className="relative h-56 w-full overflow-hidden bg-slate-100">
-              {product.image ? (
-                <Image src={product.image} alt={product.title} fill className="object-cover" />
+              {product.imageId ? (
+                <Image src={`/api/images/${product.imageId}`} alt={product.title} fill className="object-cover" />
               ) : (
                 <div className="flex h-full items-center justify-center text-slate-500">Visuel produit</div>
               )}
             </div>
             <div className="p-6">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">{getPoleLabel(product.pole)}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">{getPoleLabel(product.poleId, poles)}</p>
                 <span className="text-xs text-slate-300">/</span>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-700">{getDomainLabel(product.domain)}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-700">{getDomainLabel(product.domainId, domains)}</p>
               </div>
               <h2 className="mt-4 text-xl font-semibold text-slate-950 group-hover:text-brand-700">{product.title}</h2>
               <p className="mt-4 text-sm leading-6 text-slate-600">{product.shortDescription}</p>

@@ -1,12 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { boutiqueItems } from "@/data/boutique";
-import { getDomainLabel } from "@/data/domains";
-import { getPoleLabel } from "@/data/poles";
+import { getBoutiqueItems, getDomainLabel, getPoleLabel, getPoles, getDomains } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-export default function BoutiquePage({
+export default async function BoutiquePage({
   searchParams,
 }: {
   searchParams: { pole?: string; domain?: string };
@@ -14,15 +12,12 @@ export default function BoutiquePage({
   const selectedPole = searchParams.pole ?? "all";
   const selectedDomain = searchParams.domain ?? "all";
 
-  const poleFiltered =
-    selectedPole === "all"
-      ? boutiqueItems
-      : boutiqueItems.filter((item) => item.pole === selectedPole);
-
-  const filtered =
-    selectedDomain === "all"
-      ? poleFiltered
-      : poleFiltered.filter((item) => item.domain === selectedDomain);
+  const [items, poles, domains] = await Promise.all([
+    getBoutiqueItems(selectedPole === "all" ? undefined : selectedPole, selectedDomain === "all" ? undefined : selectedDomain),
+    getPoles(),
+    getDomains(),
+  ]);
+  const filtered = items;
 
   return (
     <div className="bg-slate-50 py-14">
@@ -45,13 +40,13 @@ export default function BoutiquePage({
                 className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:border-brand-400 hover:shadow-lg"
               >
                 <div className="relative h-56 w-full overflow-hidden bg-slate-100">
-                  <Image src={item.image} alt={item.title} fill className="object-cover" />
+                  <Image src={`/api/images/${item.imageId}`} alt={item.title} fill className="object-cover" />
                 </div>
                 <div className="p-6">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">{getPoleLabel(item.pole)}</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">{getPoleLabel(item.poleId, poles)}</p>
                     <span className="text-xs text-slate-300">/</span>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-700">{getDomainLabel(item.domain)}</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-700">{getDomainLabel(item.domainId, domains)}</p>
                   </div>
                   <h2 className="mt-4 text-xl font-semibold text-slate-950 group-hover:text-brand-700">{item.title}</h2>
                   <p className="mt-3 text-sm leading-6 text-slate-600">{item.shortDescription}</p>

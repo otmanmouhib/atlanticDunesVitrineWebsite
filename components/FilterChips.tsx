@@ -1,14 +1,13 @@
 "use client";
 
-import { getDomainLabel } from "@/data/domains";
-
 type FilterChipsProps = {
   tags: string[];
   selectedTag: string;
   onTagChange: (tag: string) => void;
+  getDomainLabel: (domainId: string) => string;
 };
 
-export default function FilterChips({ tags, selectedTag, onTagChange }: FilterChipsProps) {
+export default function FilterChips({ tags, selectedTag, onTagChange, getDomainLabel }: FilterChipsProps) {
   return (
     <div className="flex flex-wrap gap-3">
       {tags.map((tag) => {

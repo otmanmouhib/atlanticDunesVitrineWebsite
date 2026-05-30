@@ -1,13 +1,17 @@
 "use client";
 
-import { poles } from "@/data/poles";
+type Pole = {
+  slug: string;
+  label: string;
+};
 
 type PoleTabsProps = {
   selectedPole: string;
   onPoleChange: (pole: string) => void;
+  poles: Pole[];
 };
 
-export default function PoleTabs({ selectedPole, onPoleChange }: PoleTabsProps) {
+export default function PoleTabs({ selectedPole, onPoleChange, poles }: PoleTabsProps) {
   return (
     <div className="flex flex-wrap gap-3">
       <button

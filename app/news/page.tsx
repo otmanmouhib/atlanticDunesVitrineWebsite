@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { newsArticles } from "@/data/news";
+import { getNewsArticles, getNewsCategories, getNewsCategoryLabel } from "@/lib/db";
 
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString("fr-FR", {
@@ -9,7 +9,8 @@ const formatDate = (date: string) =>
     day: "numeric",
   });
 
-export default function NewsPage() {
+export default async function NewsPage() {
+  const [newsArticles, newsCategories] = await Promise.all([getNewsArticles(), getNewsCategories()]);
   return (
     <div className="relative overflow-hidden bg-slate-50 py-14 sm:py-16">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-brand-50 to-transparent" />
@@ -28,11 +29,11 @@ export default function NewsPage() {
               {newsArticles.map((article) => (
                 <article key={article.slug} className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-50 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
                   <div className="relative h-72 w-full overflow-hidden">
-                    <Image src={article.image} alt={article.title} fill className="object-cover" />
+                    <Image src={`/api/images/${article.imageId}`} alt={article.title} fill className="object-cover" />
                   </div>
                   <div className="p-8">
                     <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.28em] text-brand-700">
-                      <span>{article.category}</span>
+                      <span>{getNewsCategoryLabel(article.categoryId, newsCategories)}</span>
                       <span className="text-slate-300">/</span>
                       <span className="text-slate-500">{formatDate(article.date)}</span>
                     </div>

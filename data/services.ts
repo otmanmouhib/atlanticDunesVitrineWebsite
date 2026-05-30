@@ -6,7 +6,17 @@ export type Service = {
   methodology: string[];
   deliverable: string;
   pole: string;
+  poleId: string;
   domain: string;
+  domainId: string;
+  status?: "draft" | "published" | "archived";
+  featured?: boolean;
+  tags?: string[];
+  image?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  seoTitle?: string;
+  seoDescription?: string;
 };
 
 export const services: Service[] = [
@@ -27,7 +37,17 @@ export const services: Service[] = [
     deliverable:
       "Rapport de faisabilité avec schéma de principe, budget estimatif et analyse des risques.",
     pole: "env",
+    poleId: "env",
     domain: "water",
+    domainId: "water",
+    status: "published",
+    featured: true,
+    tags: ["faisabilité", "eau", "air", "déchets"],
+    image: "/services/etude-faisabilite-eau-air-dechets.png",
+    createdAt: "2026-01-10",
+    updatedAt: "2026-04-01",
+    seoTitle: "Étude de faisabilité eau-air-déchets | Atlantic Dunes",
+    seoDescription: "Étude complète pour valider les projets de traitement industriel eau, air et déchets.",
   },
   {
     slug: "modelisation-dispersion-atmospherique",
@@ -44,7 +64,9 @@ export const services: Service[] = [
     deliverable:
       "Étude de dispersion atmosphérique complète avec cartes d'exposition et mesures préconisées.",
     pole: "env",
+    poleId: "env",
     domain: "air",
+    domainId: "air",
   },
   {
     slug: "diagnostic-dechets",
@@ -61,7 +83,9 @@ export const services: Service[] = [
     deliverable:
       "Diagnostic déchets avec scénarios de valorisation, coûts et schéma de filière.",
     pole: "env",
+    poleId: "env",
     domain: "waste",
+    domainId: "waste",
   },
   {
     slug: "mission-amo-environnementale",
@@ -78,7 +102,9 @@ export const services: Service[] = [
     deliverable:
       "Rapport de mission AMO avec jalons, recommandations techniques et tableau de suivi de conformité.",
     pole: "env",
+    poleId: "env",
     domain: "waste",
+    domainId: "waste",
   },
   {
     slug: "maintenance-station-traitement-eaux",
@@ -95,7 +121,9 @@ export const services: Service[] = [
     deliverable:
       "Contrat de maintenance annuel avec planning d'interventions, rapport trimestriel et hotline technique.",
     pole: "env",
+    poleId: "env",
     domain: "maintenance",
+    domainId: "maintenance",
   },
   {
     slug: "maintenance-unite-depoussierage-air",
@@ -112,7 +140,9 @@ export const services: Service[] = [
     deliverable:
       "Contrat annuel avec programme de remplacement filtrant, certificats de conformité ATEX et rapports d'émissions.",
     pole: "env",
+    poleId: "env",
     domain: "maintenance",
+    domainId: "maintenance",
   },
 
   // ── POLE: energy ──────────────────────────────────────────────────────
@@ -131,7 +161,9 @@ export const services: Service[] = [
     deliverable:
       "Rapport bilan carbone complet, synthèse des postes prioritaires et feuille de route de réduction.",
     pole: "energy",
+    poleId: "energy",
     domain: "carbon",
+    domainId: "carbon",
   },
   {
     slug: "audit-energetique",
@@ -148,7 +180,9 @@ export const services: Service[] = [
     deliverable:
       "Rapport d'audit énergétique structuré avec priorités, budgets estimés et planning de mise en œuvre.",
     pole: "energy",
+    poleId: "energy",
     domain: "audit",
+    domainId: "audit",
   },
   {
     slug: "etude-dimensionnement-solaire-pv",
@@ -165,7 +199,9 @@ export const services: Service[] = [
     deliverable:
       "Rapport de dimensionnement avec schéma d'implantation, simulation de production et business plan solaire.",
     pole: "energy",
+    poleId: "energy",
     domain: "solar-pv",
+    domainId: "solar-pv",
   },
   {
     slug: "audit-autoconsommation-rentabilite",
@@ -182,7 +218,9 @@ export const services: Service[] = [
     deliverable:
       "Rapport d'audit avec indicateurs de performance, analyse financière et plan d'optimisation chiffré.",
     pole: "energy",
+    poleId: "energy",
     domain: "solar-pv",
+    domainId: "solar-pv",
   },
   {
     slug: "contrat-om-solaire-pv-bess",
@@ -199,7 +237,9 @@ export const services: Service[] = [
     deliverable:
       "Contrat O&M annuel avec SLA de disponibilité, rapports mensuels de production et accès au portail de monitoring.",
     pole: "energy",
+    poleId: "energy",
     domain: "maintenance",
+    domainId: "maintenance",
   },
 
   // ── POLE: safety ──────────────────────────────────────────────────────
@@ -218,7 +258,9 @@ export const services: Service[] = [
     deliverable:
       "Dossier d'étude d'impact détaillé avec recommandations de mitigation et synthèse décisionnelle.",
     pole: "safety",
+    poleId: "safety",
     domain: "eco",
+    domainId: "eco",
   },
   {
     slug: "analyse-cycle-de-vie-acv",
@@ -235,7 +277,9 @@ export const services: Service[] = [
     deliverable:
       "Étude ACV complète avec indicateurs environnementaux et pistes d'écoconception.",
     pole: "safety",
+    poleId: "safety",
     domain: "eco",
+    domainId: "eco",
   },
   {
     slug: "dossier-conformite-icpe",
@@ -252,7 +296,9 @@ export const services: Service[] = [
     deliverable:
       "Dossier de conformité prêt à dépôt avec annexes techniques, études d'impact et formulaires réglementaires.",
     pole: "safety",
+    poleId: "safety",
     domain: "regulatory",
+    domainId: "regulatory",
   },
   {
     slug: "etude-danger-risque-industriel",
@@ -269,7 +315,9 @@ export const services: Service[] = [
     deliverable:
       "Étude de danger structurée avec cartographie des risques, mesures correctives et plan d'action.",
     pole: "safety",
+    poleId: "safety",
     domain: "risk",
+    domainId: "risk",
   },
   {
     slug: "verification-etalonnage-detecteurs-gaz-incendie",
@@ -286,7 +334,9 @@ export const services: Service[] = [
     deliverable:
       "Certificat annuel de vérification avec rapport détaillé par équipement et fiche de non-conformités éventuelles.",
     pole: "safety",
+    poleId: "safety",
     domain: "maintenance",
+    domainId: "maintenance",
   },
   {
     slug: "maintenance-esd-acces-cctv",
@@ -303,7 +353,9 @@ export const services: Service[] = [
     deliverable:
       "Contrat de maintenance avec SLA défini, rapport semestriel de bon fonctionnement et accès au support technique.",
     pole: "safety",
+    poleId: "safety",
     domain: "maintenance",
+    domainId: "maintenance",
   },
 
   // ── POLE: elec ────────────────────────────────────────────────────────
@@ -322,7 +374,9 @@ export const services: Service[] = [
     deliverable:
       "Rapport d'audit électrique avec niveaux de priorité, estimations de travaux et planning de mise en conformité.",
     pole: "elec",
+    poleId: "elec",
     domain: "distribution",
+    domainId: "distribution",
   },
   {
     slug: "etude-automatisation-instrumentation",
@@ -339,7 +393,9 @@ export const services: Service[] = [
     deliverable:
       "Dossier I&E complet avec P&ID, liste instruments, loop diagrams et cahier des charges PLC/SCADA.",
     pole: "elec",
+    poleId: "elec",
     domain: "automation",
+    domainId: "automation",
   },
   {
     slug: "maintenance-preventive-tgbt-ups-atex",
@@ -356,7 +412,9 @@ export const services: Service[] = [
     deliverable:
       "Rapport annuel de maintenance avec thermogrammes, état des batteries et recommandations de remplacement.",
     pole: "elec",
+    poleId: "elec",
     domain: "maintenance",
+    domainId: "maintenance",
   },
 
   // ── POLE: digital ─────────────────────────────────────────────────────
@@ -375,7 +433,9 @@ export const services: Service[] = [
     deliverable:
       "Architecture IoT déployée, documentation technique, tableau de bord opérationnel et formation équipes.",
     pole: "digital",
+    poleId: "digital",
     domain: "iot",
+    domainId: "iot",
   },
   {
     slug: "developpement-solution-ia-predictive",
@@ -392,7 +452,9 @@ export const services: Service[] = [
     deliverable:
       "Modèle IA déployé avec interface de visualisation, documentation technique et plan de maintenance du modèle.",
     pole: "digital",
+    poleId: "digital",
     domain: "ai",
+    domainId: "ai",
   },
   {
     slug: "conseil-transformation-numerique-industrielle",
@@ -409,7 +471,9 @@ export const services: Service[] = [
     deliverable:
       "Rapport de maturité digitale, feuille de route priorisée et cahier des charges des projets prioritaires.",
     pole: "digital",
+    poleId: "digital",
     domain: "consulting",
+    domainId: "consulting",
   },
   {
     slug: "maintenance-scada-iot",
@@ -426,7 +490,9 @@ export const services: Service[] = [
     deliverable:
       "Contrat de maintenance avec SLA de disponibilité, rapport trimestriel de sécurité et journal des interventions.",
     pole: "digital",
+    poleId: "digital",
     domain: "maintenance",
+    domainId: "maintenance",
   },
 
   // ── POLE: nuclear ─────────────────────────────────────────────────────
@@ -445,7 +511,9 @@ export const services: Service[] = [
     deliverable:
       "Fiches d'exposition individuelles certifiées, rapport mensuel de surveillance et registre réglementaire des doses.",
     pole: "nuclear",
+    poleId: "nuclear",
     domain: "dosimetry",
+    domainId: "dosimetry",
   },
   {
     slug: "audit-radioprotection",
@@ -462,7 +530,9 @@ export const services: Service[] = [
     deliverable:
       "Rapport d'audit de radioprotection avec niveaux de non-conformité, plan d'action correctif et recommandations AIEA.",
     pole: "nuclear",
+    poleId: "nuclear",
     domain: "radioprotection",
+    domainId: "radioprotection",
   },
   {
     slug: "etalonnage-detecteurs-echange-dosimetres",
@@ -479,7 +549,9 @@ export const services: Service[] = [
     deliverable:
       "Certificats d'étalonnage certifiés, registre métrologique mis à jour et rapport de conformité réglementaire.",
     pole: "nuclear",
+    poleId: "nuclear",
     domain: "maintenance",
+    domainId: "maintenance",
   },
 
   // ── POLE: training ────────────────────────────────────────────────────
@@ -498,7 +570,9 @@ export const services: Service[] = [
     deliverable:
       "Certificat de formation, support de cours complet et accès e-learning pendant 6 mois.",
     pole: "training",
+    poleId: "training",
     domain: "env",
+    domainId: "env",
   },
   {
     slug: "formation-energies-renouvelables-solaire-pv",
@@ -515,7 +589,9 @@ export const services: Service[] = [
     deliverable:
       "Certificat de formation, guide de dimensionnement et accès à la bibliothèque technique Atlantic Dunes.",
     pole: "training",
+    poleId: "training",
     domain: "energy",
+    domainId: "energy",
   },
   {
     slug: "formation-securite-industrielle-reglementation",
@@ -532,7 +608,9 @@ export const services: Service[] = [
     deliverable:
       "Certificat de formation, modèles de documents HSE et accès au référentiel réglementaire Atlantic Dunes.",
     pole: "training",
+    poleId: "training",
     domain: "safety",
+    domainId: "safety",
   },
   {
     slug: "formation-electrotechnique-automatismes",
@@ -549,7 +627,9 @@ export const services: Service[] = [
     deliverable:
       "Certificat de formation, exercices pratiques et accès à la bibliothèque de schémas types Atlantic Dunes.",
     pole: "training",
+    poleId: "training",
     domain: "elec",
+    domainId: "elec",
   },
   {
     slug: "formation-iot-scada-ia-industrielle",
@@ -566,7 +646,9 @@ export const services: Service[] = [
     deliverable:
       "Certificat de formation, accès à l'environnement de démonstration SCADA/IoT et guide de démarrage rapide.",
     pole: "training",
+    poleId: "training",
     domain: "digital",
+    domainId: "digital",
   },
   {
     slug: "formation-radioprotection-dosimetrie-aiea",
@@ -583,7 +665,9 @@ export const services: Service[] = [
     deliverable:
       "Certificat de formation reconnu AIEA, carnet de formation individuel et accès aux mises à jour réglementaires.",
     pole: "training",
+    poleId: "training",
     domain: "nuclear",
+    domainId: "nuclear",
   },
   {
     slug: "coaching-accompagnement-managerial-hse",
@@ -600,6 +684,8 @@ export const services: Service[] = [
     deliverable:
       "Plan de développement managérial HSE, rapport de progression et attestation de coaching professionnel.",
     pole: "training",
+    poleId: "training",
     domain: "coaching",
+    domainId: "coaching",
   },
 ];
