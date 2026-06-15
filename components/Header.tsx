@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import type { Pole, DomainTag } from "@/lib/db";
+import type { Pole, DomainTag, BoutiqueCategory, NewsCategory } from "@/lib/db";
 
 type MenuCategory = {
   pole: { slug: string; label: string };
@@ -13,13 +13,13 @@ type MenuCategory = {
 type HeaderProps = {
   serviceCategories: MenuCategory[];
   productCategories: MenuCategory[];
-  boutiqueCategories: MenuCategory[];
+  boutiqueCategories: BoutiqueCategory[];
+  newsCategories: NewsCategory[];
   poles: Pole[];
   domains: DomainTag[];
 };
 
 const otherNavItems = [
-  { label: "News", href: "/news" },
   { label: "Références", href: "/references" },
   { label: "Certifications", href: "/certifications" },
   { label: "Qui sommes-nous", href: "/about" },
@@ -37,20 +37,22 @@ function getDomainLabel(domainId: string, domains: DomainTag[]) {
   return getLabel(domainId, domains);
 }
 
-export default function Header({ serviceCategories, productCategories, boutiqueCategories, poles, domains }: HeaderProps) {
+export default function Header({ serviceCategories, productCategories, boutiqueCategories, newsCategories, poles, domains }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [openMenu, setOpenMenu] = useState<"none" | "products" | "services" | "boutique">("none");
+  const [openMenu, setOpenMenu] = useState<"none" | "products" | "services" | "boutique" | "news">("none");
   const [openServicePole, setOpenServicePole] = useState<string | null>(null);
   const [openProductPole, setOpenProductPole] = useState<string | null>(null);
-  const [openBoutiquePole, setOpenBoutiquePole] = useState<string | null>(null);
-  const [openMobileSection, setOpenMobileSection] = useState<"none" | "services" | "products" | "boutique">("none");
+  const [openBoutiqueCategory, setOpenBoutiqueCategory] = useState<string | null>(null);
+  const [openNewsCategory, setOpenNewsCategory] = useState<string | null>(null);
+  const [openMobileSection, setOpenMobileSection] = useState<"none" | "services" | "products" | "boutique" | "news">("none");
 
-  const toggleMenu = (menu: "products" | "services" | "boutique") => {
+  const toggleMenu = (menu: "products" | "services" | "boutique" | "news") => {
     setOpenMenu((current) => {
       const nextMenu = current === menu ? "none" : menu;
       if (nextMenu !== "services") setOpenServicePole(null);
       if (nextMenu !== "products") setOpenProductPole(null);
-      if (nextMenu !== "boutique") setOpenBoutiquePole(null);
+      if (nextMenu !== "boutique") setOpenBoutiqueCategory(null);
+      if (nextMenu !== "news") setOpenNewsCategory(null);
       return nextMenu;
     });
   };
@@ -63,11 +65,15 @@ export default function Header({ serviceCategories, productCategories, boutiqueC
     setOpenProductPole((current) => (current === poleSlug ? null : poleSlug));
   };
 
-  const toggleBoutiquePole = (poleSlug: string) => {
-    setOpenBoutiquePole((current) => (current === poleSlug ? null : poleSlug));
+  const toggleBoutiqueCategory = (categorySlug: string) => {
+    setOpenBoutiqueCategory((current) => (current === categorySlug ? null : categorySlug));
   };
 
-  const toggleMobileSection = (section: "services" | "products" | "boutique") => {
+  const toggleNewsCategory = (categorySlug: string) => {
+    setOpenNewsCategory((current) => (current === categorySlug ? null : categorySlug));
+  };
+
+  const toggleMobileSection = (section: "services" | "products" | "boutique" | "news") => {
     setOpenMobileSection((current) => (current === section ? "none" : section));
   };
 
@@ -75,7 +81,7 @@ export default function Header({ serviceCategories, productCategories, boutiqueC
     setOpenMenu("none");
     setOpenServicePole(null);
     setOpenProductPole(null);
-    setOpenBoutiquePole(null);
+    setOpenBoutiqueCategory(null);
     setOpenMobileSection("none");
     setIsOpen(false);
   };
@@ -85,7 +91,7 @@ export default function Header({ serviceCategories, productCategories, boutiqueC
     setOpenMenu("none");
     setOpenServicePole(null);
     setOpenProductPole(null);
-    setOpenBoutiquePole(null);
+    setOpenBoutiqueCategory(null);
     setOpenMobileSection("none");
   };
 
@@ -272,39 +278,39 @@ export default function Header({ serviceCategories, productCategories, boutiqueC
                       Voir toute la boutique
                     </Link>
                     <p className="text-sm leading-6 text-slate-600">
-                      Parcourez nos équipements et accessoires par pôle et domaine.
+                      Parcourez les catégories boutique par segment et sous-catégorie.
                     </p>
                   </div>
                   <div className="grid gap-6 sm:grid-cols-2">
                     {boutiqueCategories.map((category) => {
-                      const isOpenPole = openBoutiquePole === category.pole.slug;
+                      const isOpenCategory = openBoutiqueCategory === category.slug;
                       return (
-                        <div key={category.pole.slug}>
+                        <div key={category.slug}>
                           <button
                             type="button"
-                            onClick={() => toggleBoutiquePole(category.pole.slug)}
+                            onClick={() => toggleBoutiqueCategory(category.slug)}
                             className="flex w-full items-center justify-between rounded-2xl px-3 py-2 text-left text-sm font-semibold text-slate-900 hover:bg-slate-50"
                           >
-                            {category.pole.label}
-                            <span aria-hidden>{isOpenPole ? "▴" : "▾"}</span>
+                            {category.label}
+                            <span aria-hidden>{isOpenCategory ? "▴" : "▾"}</span>
                           </button>
-                          {isOpenPole && (
+                          {isOpenCategory && (
                             <div className="mt-3 space-y-2">
                               <Link
-                                href={`/boutique?pole=${category.pole.slug}`}
+                                href={`/boutique?category=${category.slug}`}
                                 onClick={closeAllMenus}
                                 className="block rounded-2xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-700"
                               >
-                                {`Tous les ${category.pole.label.toLowerCase()}`}
+                                {`Tous les ${category.label.toLowerCase()}`}
                               </Link>
-                              {category.domains.map((domain) => (
+                              {category.subcategories.map((subcategory) => (
                                 <Link
-                                  key={domain.slug}
-                                  href={`/boutique?pole=${category.pole.slug}&domain=${domain.slug}`}
+                                  key={subcategory.slug}
+                                  href={`/boutique?category=${category.slug}&subcategory=${subcategory.slug}`}
                                   onClick={closeAllMenus}
                                   className="block rounded-2xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-700"
                                 >
-                                  {domain.label}
+                                  {subcategory.label}
                                 </Link>
                               ))}
                             </div>
@@ -318,7 +324,71 @@ export default function Header({ serviceCategories, productCategories, boutiqueC
             )}
           </div>
 
-          {otherNavItems.map((item) => (
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => toggleMenu("news")}
+              className="inline-flex items-center gap-1 text-sm font-medium text-slate-700 transition hover:text-brand-700"
+            >
+              News
+              <span aria-hidden>{openMenu === "news" ? "▴" : "▾"}</span>
+            </button>
+
+            {openMenu === "news" && (
+              <div className="absolute left-0 top-full z-50 mt-3 w-[min(42rem,100vw)] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
+                <div className="grid gap-6 p-6 sm:grid-cols-[240px_1fr]">
+                  <div className="space-y-4 border-r border-slate-200 pr-6">
+                    <p className="text-xs uppercase tracking-[0.24em] text-slate-500">News</p>
+                    <Link href="/news" onClick={closeAllMenus} className="block text-sm font-semibold text-slate-900 hover:text-brand-700">
+                      Voir toutes les actualités
+                    </Link>
+                    <p className="text-sm leading-6 text-slate-600">
+                      Parcourez nos actualités par catégorie et sous-catégorie.
+                    </p>
+                  </div>
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    {newsCategories.map((category) => {
+                      const isOpenNewsCategory = openNewsCategory === category.id;
+                      return (
+                        <div key={category.id}>
+                          <button
+                            type="button"
+                            onClick={() => toggleNewsCategory(category.id)}
+                            className="flex w-full items-center justify-between rounded-2xl px-3 py-2 text-left text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                          >
+                            {category.label}
+                            <span aria-hidden>{isOpenNewsCategory ? "▴" : "▾"}</span>
+                          </button>
+                          {isOpenNewsCategory && (
+                            <div className="mt-3 space-y-2">
+                              <Link
+                                href={`/news?category=${category.id}`}
+                                onClick={closeAllMenus}
+                                className="block rounded-2xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-700"
+                              >
+                                {`Toutes les ${category.label.toLowerCase()}`}
+                              </Link>
+                              {category.subcategories.map((subcategory) => (
+                                <Link
+                                  key={subcategory.slug}
+                                  href={`/news?category=${category.id}&subcategory=${subcategory.slug}`}
+                                  onClick={closeAllMenus}
+                                  className="block rounded-2xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-700"
+                                >
+                                  {subcategory.label}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+            {otherNavItems.map((item) => (
             <Link key={item.href} href={item.href} className="text-sm font-medium text-slate-700 hover:text-brand-700">
               {item.label}
             </Link>
@@ -481,6 +551,63 @@ export default function Header({ serviceCategories, productCategories, boutiqueC
             <div className="space-y-2 rounded-2xl bg-slate-50 p-3 text-sm text-slate-700">
               <button
                 type="button"
+                onClick={() => toggleMobileSection("news")}
+                aria-expanded={openMobileSection === "news"}
+                aria-controls="mobile-news-section"
+                className="flex w-full items-center justify-between rounded-2xl bg-slate-100 px-3 py-3 text-left text-sm font-semibold text-slate-900 hover:bg-slate-200"
+              >
+                News
+                <span aria-hidden>{openMobileSection === "news" ? "▴" : "▾"}</span>
+              </button>
+              {openMobileSection === "news" && (
+                <div id="mobile-news-section" className="space-y-3 pt-3">
+                  <Link href="/news" className="block rounded-xl px-3 py-2 text-base font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-700" onClick={closeAllMenus}>
+                    Toutes les actualités
+                  </Link>
+                  {newsCategories.map((category) => {
+                    const isOpenNewsCategory = openNewsCategory === category.id;
+                    return (
+                      <div key={category.id} className="space-y-1">
+                        <button
+                          type="button"
+                          onClick={() => toggleNewsCategory(category.id)}
+                          aria-expanded={isOpenNewsCategory}
+                          aria-controls={`news-${category.id}`}
+                          className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-white"
+                        >
+                          {category.label}
+                          <span aria-hidden>{isOpenNewsCategory ? "▴" : "▾"}</span>
+                        </button>
+                        {isOpenNewsCategory && (
+                          <div id={`news-${category.id}`} className="space-y-1 pl-3">
+                            <Link
+                              href={`/news?category=${category.id}`}
+                              className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-white"
+                              onClick={closeAllMenus}
+                            >
+                              {`Toutes les ${category.label.toLowerCase()}`}
+                            </Link>
+                            {category.subcategories.map((subcategory) => (
+                              <Link
+                                key={subcategory.slug}
+                                href={`/news?category=${category.id}&subcategory=${subcategory.slug}`}
+                                className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-white"
+                                onClick={closeAllMenus}
+                              >
+                                {subcategory.label}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            <div className="space-y-2 rounded-2xl bg-slate-50 p-3 text-sm text-slate-700">
+              <button
+                type="button"
                 onClick={() => toggleMobileSection("boutique")}
                 aria-expanded={openMobileSection === "boutique"}
                 aria-controls="mobile-boutique-section"
@@ -495,36 +622,36 @@ export default function Header({ serviceCategories, productCategories, boutiqueC
                     Toute la boutique
                   </Link>
                   {boutiqueCategories.map((category) => {
-                    const isOpenPole = openBoutiquePole === category.pole.slug;
+                    const isOpenCategory = openBoutiqueCategory === category.slug;
                     return (
-                      <div key={category.pole.slug} className="space-y-1">
+                      <div key={category.slug} className="space-y-1">
                         <button
                           type="button"
-                          onClick={() => toggleBoutiquePole(category.pole.slug)}
-                          aria-expanded={isOpenPole}
-                          aria-controls={`boutique-${category.pole.slug}`}
+                          onClick={() => toggleBoutiqueCategory(category.slug)}
+                          aria-expanded={isOpenCategory}
+                          aria-controls={`boutique-${category.slug}`}
                           className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-white"
                         >
-                          {category.pole.label}
-                          <span aria-hidden>{isOpenPole ? "▴" : "▾"}</span>
+                          {category.label}
+                          <span aria-hidden>{isOpenCategory ? "▴" : "▾"}</span>
                         </button>
-                        {isOpenPole && (
-                          <div id={`boutique-${category.pole.slug}`} className="space-y-1 pl-3">
+                        {isOpenCategory && (
+                          <div id={`boutique-${category.slug}`} className="space-y-1 pl-3">
                             <Link
-                              href={`/boutique?pole=${category.pole.slug}`}
+                              href={`/boutique?category=${category.slug}`}
                               className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-white"
                               onClick={closeAllMenus}
                             >
-                              {`Tous les ${category.pole.label.toLowerCase()}`}
+                              {`Tous les ${category.label.toLowerCase()}`}
                             </Link>
-                            {category.domains.map((domain) => (
+                            {category.subcategories.map((subcategory) => (
                               <Link
-                                key={domain.slug}
-                                href={`/boutique?pole=${category.pole.slug}&domain=${domain.slug}`}
+                                key={subcategory.slug}
+                                href={`/boutique?category=${category.slug}&subcategory=${subcategory.slug}`}
                                 className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-white"
                                 onClick={closeAllMenus}
                               >
-                                {domain.label}
+                                {subcategory.label}
                               </Link>
                             ))}
                           </div>

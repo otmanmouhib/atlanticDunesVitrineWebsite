@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getNewsArticles, getNewsCategories, getNewsCategoryLabel } from "@/lib/db";
+import { getNewsArticles, getNewsCategories, getNewsCategoryLabel, getNewsSubcategoryLabel } from "@/lib/db";
 
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString("fr-FR", {
@@ -9,8 +9,15 @@ const formatDate = (date: string) =>
     day: "numeric",
   });
 
-export default async function NewsPage() {
-  const [newsArticles, newsCategories] = await Promise.all([getNewsArticles(), getNewsCategories()]);
+export default async function NewsPage({ searchParams }: { searchParams: { category?: string; subcategory?: string } }) {
+  const selectedCategory = searchParams.category;
+  const selectedSubcategory = searchParams.subcategory;
+  const [newsArticles, newsCategories] = await Promise.all([
+    getNewsArticles(selectedCategory, selectedSubcategory),
+    getNewsCategories(),
+  ]);
+  const selectedCategoryLabel = selectedCategory ? getNewsCategoryLabel(selectedCategory, newsCategories) : "Toutes les actualités";
+  const selectedSubcategoryLabel = selectedSubcategory ? getNewsSubcategoryLabel(selectedSubcategory, newsCategories) : null;
   return (
     <div className="relative overflow-hidden bg-slate-50 py-14 sm:py-16">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-brand-50 to-transparent" />
@@ -23,6 +30,12 @@ export default async function NewsPage() {
           <p className="mx-auto mt-6 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
             Retrouvez nos dernières publications, événements et annonces d’entreprise. Les articles sont affichés par ordre chronologique inversé, avec l’actualité la plus récente en premier.
           </p>
+          <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-slate-700">
+            <span className="rounded-full bg-brand-50 px-3 py-1 font-medium text-brand-700">{selectedCategoryLabel}</span>
+            {selectedSubcategoryLabel ? (
+              <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700">{selectedSubcategoryLabel}</span>
+            ) : null}
+          </div>
 
           <div className="mt-12 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
             <div className="space-y-8">
@@ -34,6 +47,12 @@ export default async function NewsPage() {
                   <div className="p-8">
                     <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.28em] text-brand-700">
                       <span>{getNewsCategoryLabel(article.categoryId, newsCategories)}</span>
+                      {article.subcategoryId ? (
+                        <>
+                          <span className="text-slate-300">/</span>
+                          <span>{getNewsSubcategoryLabel(article.subcategoryId, newsCategories)}</span>
+                        </>
+                      ) : null}
                       <span className="text-slate-300">/</span>
                       <span className="text-slate-500">{formatDate(article.date)}</span>
                     </div>

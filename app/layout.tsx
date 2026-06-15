@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getMenuCategories, getEnterpriseInfo } from "@/lib/db";
+import { getMenuCategories, getEnterpriseInfo, getNewsCategories } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -14,9 +14,10 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [{ serviceCategories, productCategories, boutiqueCategories, poles, domains }, enterpriseInfo] = await Promise.all([
+  const [{ serviceCategories, productCategories, boutiqueCategories, poles, domains }, enterpriseInfo, newsCategories] = await Promise.all([
     getMenuCategories(),
     getEnterpriseInfo(),
+    getNewsCategories(),
   ]);
 
   return (
@@ -27,6 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             serviceCategories={serviceCategories}
             productCategories={productCategories}
             boutiqueCategories={boutiqueCategories}
+            newsCategories={newsCategories}
             poles={poles}
             domains={domains}
           />

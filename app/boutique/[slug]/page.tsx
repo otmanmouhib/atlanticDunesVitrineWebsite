@@ -89,12 +89,16 @@ export default async function BoutiqueProductPage({ params }: { params: { slug: 
 
             <div>
               <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Pôle</p>
-              <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-700">{getPoleLabel(item.poleId, poles)}</p>
+              <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-700">
+                {item.poleId ? getPoleLabel(item.poleId, poles) : "Non défini"}
+              </p>
             </div>
 
             <div>
               <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Domaine</p>
-              <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900">{getDomainLabel(item.domainId, domains)}</p>
+              <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900">
+                {item.domainId ? getDomainLabel(item.domainId, domains) : "Non défini"}
+              </p>
             </div>
 
             <div>

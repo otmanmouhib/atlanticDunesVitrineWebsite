@@ -5,11 +5,11 @@ const path = require("path");
 const { MongoClient, Binary } = require("mongodb");
 const { newsArticles } = require("../data/news.ts");
 const { boutiqueItems } = require("../data/boutique.ts");
+const { boutiqueCategories } = require("../data/boutiqueCategories.ts");
 const { products } = require("../data/products.ts");
 const { services } = require("../data/services.ts");
 const { newsCategories } = require("../data/newsCategories.ts");
 const { poles } = require("../data/poles.ts");
-const { domainTags } = require("../data/domains.ts");
 
 function loadEnvFile(envPath) {
   if (!fs.existsSync(envPath)) return;
@@ -51,8 +51,50 @@ function normalizeImageId(imagePath) {
   return relative.replace(/[\/\\]/g, "-");
 }
 
+function getBoutiqueCategoryForItem(item) {
+  const mapping = {
+    water: { categoryId: "water-solutions", subcategoryId: "filters" },
+    air: { categoryId: "water-solutions", subcategoryId: "air-treatment" },
+    "solar-pv": { categoryId: "energy-systems", subcategoryId: "pv" },
+    power: { categoryId: "energy-systems", subcategoryId: "power-electronics" },
+    storage: { categoryId: "energy-systems", subcategoryId: "storage" },
+    gas: { categoryId: "safety-equipment", subcategoryId: "gas-detection" },
+    cctv: { categoryId: "safety-equipment", subcategoryId: "cctv" },
+    detection: { categoryId: "safety-equipment", subcategoryId: "radiation" },
+    dosimetry: { categoryId: "safety-equipment", subcategoryId: "radiation" },
+    radioprotection: { categoryId: "safety-equipment", subcategoryId: "radiation" },
+    iot: { categoryId: "digital-automation", subcategoryId: "iot" },
+    scada: { categoryId: "digital-automation", subcategoryId: "scada" },
+    simulation: { categoryId: "digital-automation", subcategoryId: "simulation" },
+    coaching: { categoryId: "training-solutions", subcategoryId: "hse" },
+    elearning: { categoryId: "training-solutions", subcategoryId: "elearning" },
+    nuclear: { categoryId: "training-solutions", subcategoryId: "simulation" },
+  };
+  if (item.domainId && mapping[item.domainId]) {
+    return mapping[item.domainId];
+  }
+  if (item.poleId === "training") {
+    return { categoryId: "training-solutions", subcategoryId: "hse" };
+  }
+  return undefined;
+}
+
+function assignBoutiqueCategoryFields(item) {
+  const mapped = getBoutiqueCategoryForItem(item);
+  if (!mapped) return item;
+  return {
+    ...item,
+    boutiqueCategoryId: item.boutiqueCategoryId || mapped.categoryId,
+    boutiqueSubcategoryId: item.boutiqueSubcategoryId || mapped.subcategoryId,
+  };
+}
+
 function findPublicImageFilePath(imagePath) {
   const root = path.resolve(__dirname, "..", "public");
+  if (!fs.existsSync(root)) {
+    return null;
+  }
+
   const normalized = imagePath.replace(/^\//, "");
   const direct = path.join(root, normalized);
   if (fs.existsSync(direct)) {
@@ -210,7 +252,6 @@ async function main() {
       db.collection("services").deleteMany({}),
       db.collection("boutique").deleteMany({}),
       db.collection("poles").deleteMany({}),
-      db.collection("domains").deleteMany({}),
       db.collection("newsCategories").deleteMany({}),
       db.collection("images").deleteMany({}),
       db.collection("entrepriseInfo").deleteMany({}),
@@ -221,13 +262,14 @@ async function main() {
   const normalizedProducts = await normalizeImages(products, db);
   const normalizedServices = await normalizeImages(services, db);
   const normalizedBoutique = await normalizeImages(boutiqueItems, db);
+  const normalizedBoutiqueWithCategory = normalizedBoutique.map(assignBoutiqueCategoryFields);
 
   await seedCollection(db, "news", normalizedNews, "slug", reset);
   await seedCollection(db, "products", normalizedProducts, "slug", reset);
   await seedCollection(db, "services", normalizedServices, "slug", reset);
-  await seedCollection(db, "boutique", normalizedBoutique, "slug", reset);
+  await seedCollection(db, "boutique", normalizedBoutiqueWithCategory, "slug", reset);
+  await seedCollection(db, "boutiqueCategories", boutiqueCategories, "slug", reset);
   await seedCollection(db, "poles", poles, "slug", reset);
-  await seedCollection(db, "domains", domainTags, "slug", reset);
   await seedCollection(db, "newsCategories", newsCategories, "id", reset);
 
   const entrepriseInfo = {

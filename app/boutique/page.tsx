@@ -1,19 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getBoutiqueItems, getDomainLabel, getPoleLabel, getPoles, getDomains } from "@/lib/db";
+import { getBoutiqueItems, getBoutiqueCategories, getDomainLabel, getPoleLabel, getPoles, getDomains } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function BoutiquePage({
   searchParams,
 }: {
-  searchParams: { pole?: string; domain?: string };
+  searchParams: { category?: string; subcategory?: string };
 }) {
-  const selectedPole = searchParams.pole ?? "all";
-  const selectedDomain = searchParams.domain ?? "all";
+  const selectedCategory = searchParams.category ?? "all";
+  const selectedSubcategory = searchParams.subcategory ?? "all";
 
-  const [items, poles, domains] = await Promise.all([
-    getBoutiqueItems(selectedPole === "all" ? undefined : selectedPole, selectedDomain === "all" ? undefined : selectedDomain),
+  const [items, boutiqueCategories, poles, domains] = await Promise.all([
+    getBoutiqueItems(selectedCategory === "all" ? undefined : selectedCategory, selectedSubcategory === "all" ? undefined : selectedSubcategory),
+    getBoutiqueCategories(),
     getPoles(),
     getDomains(),
   ]);
@@ -44,9 +45,13 @@ export default async function BoutiquePage({
                 </div>
                 <div className="p-6">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">{getPoleLabel(item.poleId, poles)}</p>
-                    <span className="text-xs text-slate-300">/</span>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-700">{getDomainLabel(item.domainId, domains)}</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">{item.boutiqueCategoryId ?? "Boutique"}</p>
+                    {item.boutiqueSubcategoryId ? (
+                      <>
+                        <span className="text-xs text-slate-300">/</span>
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-700">{item.boutiqueSubcategoryId}</p>
+                      </>
+                    ) : null}
                   </div>
                   <h2 className="mt-4 text-xl font-semibold text-slate-950 group-hover:text-brand-700">{item.title}</h2>
                   <p className="mt-3 text-sm leading-6 text-slate-600">{item.shortDescription}</p>

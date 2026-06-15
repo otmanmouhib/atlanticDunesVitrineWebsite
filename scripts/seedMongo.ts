@@ -8,7 +8,6 @@ import { products } from "../data/products";
 import { services } from "../data/services";
 import { newsCategories } from "../data/newsCategories";
 import { poles } from "../data/poles";
-import { domainTags } from "../data/domains";
 
 function loadEnvFile(envPath: string) {
   if (!fs.existsSync(envPath)) return;
@@ -54,6 +53,10 @@ function normalizeImageId(imagePath: string) {
 
 function findPublicImageFilePath(imagePath: string) {
   const root = path.join(process.cwd(), "public");
+  if (!fs.existsSync(root)) {
+    return null;
+  }
+
   const normalized = imagePath.replace(/^\//, "");
   const direct = path.join(root, normalized);
   if (fs.existsSync(direct)) {
@@ -200,7 +203,6 @@ async function main() {
   await seedCollection(db, "services", services, "slug", reset);
   await seedCollection(db, "boutique", boutiqueItems, "slug", reset);
   await seedCollection(db, "poles", poles, "slug", reset);
-  await seedCollection(db, "domains", domainTags, "slug", reset);
   await seedCollection(db, "newsCategories", newsCategories, "id", reset);
 
   console.log("MongoDB seeding complete.");

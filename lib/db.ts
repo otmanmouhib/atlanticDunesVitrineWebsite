@@ -2,22 +2,31 @@ import clientPromise from "./mongodb";
 import { GridFSBucket } from "mongodb";
 import type { Document } from "mongodb";
 
-export type Pole = {
-  slug: string;
-  label: string;
-  shortDescription: string;
-};
-
 export type DomainTag = {
   slug: string;
   label: string;
   description: string;
 };
 
+export type Pole = {
+  slug: string;
+  label: string;
+  shortDescription: string;
+  domains: DomainTag[];
+};
+
 export type NewsCategory = {
   id: string;
   label: string;
   description: string;
+  subcategories: Array<{ slug: string; label: string; description?: string }>;
+};
+
+export type BoutiqueCategory = {
+  slug: string;
+  label: string;
+  description: string;
+  subcategories: Array<{ slug: string; label: string; description?: string }>;
 };
 
 export type Service = {
@@ -61,8 +70,10 @@ export type BoutiqueItem = {
   price: string;
   availability: string;
   inStock: boolean;
-  poleId: string;
-  domainId: string;
+  boutiqueCategoryId?: string;
+  boutiqueSubcategoryId?: string;
+  poleId?: string;
+  domainId?: string;
   imageId?: string;
   galleryImageIds?: string[];
 };
@@ -74,6 +85,7 @@ export type NewsArticle = {
   publishedAt: string;
   updatedAt?: string;
   categoryId: string;
+  subcategoryId?: string;
   category?: string;
   imageId?: string;
   summary: string;
@@ -123,14 +135,34 @@ export function getNewsCategoryLabel(categoryId: string, categories: NewsCategor
   return category?.label ?? categoryId;
 }
 
+export function getNewsSubcategoryLabel(subcategoryId: string, categories: NewsCategory[]) {
+  for (const category of categories) {
+    const subcategory = category.subcategories.find((item) => item.slug === subcategoryId);
+    if (subcategory) return subcategory.label;
+  }
+  return subcategoryId;
+}
+
 export async function getPoles() {
   const db = await getDb();
   return db.collection<Pole>("poles").find().toArray();
 }
 
+function getDomainsFromPoles(poles: Pole[]) {
+  const domainMap = new Map<string, DomainTag>();
+  for (const pole of poles) {
+    for (const domain of pole.domains ?? []) {
+      if (!domainMap.has(domain.slug)) {
+        domainMap.set(domain.slug, domain);
+      }
+    }
+  }
+  return Array.from(domainMap.values());
+}
+
 export async function getDomains() {
-  const db = await getDb();
-  return db.collection<DomainTag>("domains").find().toArray();
+  const poles = await getPoles();
+  return getDomainsFromPoles(poles);
 }
 
 export async function getNewsCategories() {
@@ -164,11 +196,11 @@ export async function getProductBySlug(slug: string) {
   return db.collection<Product>("products").findOne({ slug });
 }
 
-export async function getBoutiqueItems(pole?: string, domain?: string) {
+export async function getBoutiqueItems(category?: string, subcategory?: string) {
   const db = await getDb();
   const filter: Document = {};
-  if (pole) filter.poleId = pole;
-  if (domain) filter.domainId = domain;
+  if (category) filter.boutiqueCategoryId = category;
+  if (subcategory) filter.boutiqueSubcategoryId = subcategory;
   return db.collection<BoutiqueItem>("boutique").find(filter).toArray();
 }
 
@@ -177,9 +209,29 @@ export async function getBoutiqueItemBySlug(slug: string) {
   return db.collection<BoutiqueItem>("boutique").findOne({ slug });
 }
 
-export async function getNewsArticles() {
+export async function getBoutiqueCategories() {
   const db = await getDb();
-  return db.collection<NewsArticle>("news").find().sort({ publishedAt: -1 }).toArray();
+  return db.collection<BoutiqueCategory>("boutiqueCategories").find().toArray();
+}
+
+export function getBoutiqueCategoryLabel(categoryId: string, categories: BoutiqueCategory[]) {
+  return categories.find((item) => item.slug === categoryId)?.label ?? categoryId;
+}
+
+export function getBoutiqueSubcategoryLabel(subcategoryId: string, categories: BoutiqueCategory[]) {
+  for (const category of categories) {
+    const subcategory = category.subcategories.find((item) => item.slug === subcategoryId);
+    if (subcategory) return subcategory.label;
+  }
+  return subcategoryId;
+}
+
+export async function getNewsArticles(category?: string, subcategory?: string) {
+  const db = await getDb();
+  const filter: Document = {};
+  if (category) filter.categoryId = category;
+  if (subcategory) filter.subcategoryId = subcategory;
+  return db.collection<NewsArticle>("news").find(filter).sort({ publishedAt: -1 }).toArray();
 }
 
 export async function getNewsArticleBySlug(slug: string) {
@@ -246,22 +298,23 @@ export async function storeImageBuffer(imageId: string, buffer: Buffer, contentT
 }
 
 export async function getMenuCategories() {
-  const [services, products, boutique, poles, domains] = await Promise.all([
+  const [services, products, boutiqueCategories, poles] = await Promise.all([
     getServices(),
     getProducts(),
-    getBoutiqueItems(),
+    getBoutiqueCategories(),
     getPoles(),
-    getDomains(),
   ]);
+
+  const domains = getDomainsFromPoles(poles);
 
   const build = (items: Array<{ poleId: string; domainId: string }>) => {
     return poles
       .map((pole) => {
-        const domainIds = Array.from(new Set(items.filter((item) => item.poleId === pole.slug).map((item) => item.domainId)));
-        if (!domainIds.length) return null;
+        const hasItems = items.some((item) => item.poleId === pole.slug);
+        if (!hasItems) return null;
         return {
           pole: { slug: pole.slug, label: pole.label },
-          domains: domainIds.map((domainId) => ({ slug: domainId, label: getDomainLabel(domainId, domains) })),
+          domains: pole.domains.map((domain) => ({ slug: domain.slug, label: domain.label })),
         };
       })
       .filter((entry): entry is MenuCategory => entry !== null);
@@ -270,7 +323,7 @@ export async function getMenuCategories() {
   return {
     serviceCategories: build(services),
     productCategories: build(products),
-    boutiqueCategories: build(boutique),
+    boutiqueCategories,
     poles,
     domains,
   };
