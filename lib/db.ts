@@ -67,15 +67,23 @@ export type BoutiqueItem = {
   description: string;
   details: string[];
   specs: { label: string; value: string }[];
-  price: string;
+  price: number;
+  currency: string;
   availability: string;
   inStock: boolean;
+  inventoryCount?: number;
+  sku?: string;
+  featured?: boolean;
+  status?: string;
+  tags?: string[];
+  image?: string;
+  gallery?: string[];
   boutiqueCategoryId?: string;
   boutiqueSubcategoryId?: string;
   poleId?: string;
   domainId?: string;
-  imageId?: string;
-  galleryImageIds?: string[];
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type NewsArticle = {

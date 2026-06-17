@@ -2,7 +2,7 @@ require("ts-node/register");
 
 const fs = require("fs");
 const path = require("path");
-const { MongoClient, Binary } = require("mongodb");
+const { MongoClient, Binary, GridFSBucket } = require("mongodb");
 const { newsArticles } = require("../data/news.ts");
 const { boutiqueItems } = require("../data/boutique.ts");
 const { boutiqueCategories } = require("../data/boutiqueCategories.ts");
@@ -169,7 +169,49 @@ async function saveImage(db, imagePath) {
     { upsert: true }
   );
 
+  const bucket = new GridFSBucket(db, { bucketName: "images" });
+  const existingFile = await db.collection("images.files").findOne({ filename: imageId });
+  if (existingFile) {
+    try {
+      await bucket.delete(existingFile._id);
+    } catch (error) {
+      // ignore delete errors for stale GridFS files
+    }
+  }
+
+  const uploadStream = bucket.openUploadStream(imageId, {
+    contentType,
+    metadata: { source: imagePath },
+  });
+  uploadStream.end(buffer);
+  await new Promise((resolve, reject) => {
+    uploadStream.on("finish", resolve);
+    uploadStream.on("error", reject);
+  });
+
   return imageId;
+}
+
+function parsePrice(value) {
+  if (typeof value === "number") return value;
+  if (typeof value !== "string") return undefined;
+  const numeric = value.replace(/[^0-9,.]/g, "").replace(/,/g, ".");
+  const parsed = parseFloat(numeric);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function removeOldBoutiqueFields(item) {
+  const {
+    unitPrice,
+    imageId,
+    galleryImageIds,
+    imageGallery,
+    pole,
+    domain,
+    warranty,
+    ...rest
+  } = item;
+  return rest;
 }
 
 async function normalizeImages(items, db) {
@@ -185,28 +227,42 @@ async function normalizeImages(items, db) {
         }
         const imageId = await imageUploads.get(normalizedItem.image);
         if (imageId) {
-          normalizedItem.imageId = imageId;
+          normalizedItem.image = imageId;
         }
       }
 
-      if (Array.isArray(normalizedItem.imageGallery)) {
-        normalizedItem.galleryImageIds = [];
-        for (const galleryImage of normalizedItem.imageGallery) {
+      if (Array.isArray(normalizedItem.gallery)) {
+        const galleryIds = [];
+        for (const galleryImage of normalizedItem.gallery) {
           if (typeof galleryImage === "string") {
             if (!imageUploads.has(galleryImage)) {
               imageUploads.set(galleryImage, saveImage(db, galleryImage));
             }
             const galleryImageId = await imageUploads.get(galleryImage);
             if (galleryImageId) {
-              normalizedItem.galleryImageIds.push(galleryImageId);
+              galleryIds.push(galleryImageId);
             }
           }
         }
+        normalizedItem.gallery = galleryIds;
       }
 
       return normalizedItem;
     })
   );
+}
+
+function normalizeBoutiqueDocument(item) {
+  const document = removeOldBoutiqueFields(item);
+  const priceValue = parsePrice(document.price);
+  return {
+    ...document,
+    price: priceValue ?? (typeof document.price === "number" ? document.price : 0),
+    currency: document.currency || "EUR",
+    inventoryCount: typeof document.inventoryCount === "number" ? document.inventoryCount : document.inventoryCount ? Number(document.inventoryCount) : undefined,
+    image: document.image || undefined,
+    gallery: Array.isArray(document.gallery) ? document.gallery : undefined,
+  };
 }
 
 async function seedCollection(db, name, items, idKey = "slug", reset = false) {
@@ -251,9 +307,13 @@ async function main() {
       db.collection("products").deleteMany({}),
       db.collection("services").deleteMany({}),
       db.collection("boutique").deleteMany({}),
+      db.collection("boutiqueCategories").deleteMany({}),
       db.collection("poles").deleteMany({}),
       db.collection("newsCategories").deleteMany({}),
+      db.collection("contacts").deleteMany({}),
       db.collection("images").deleteMany({}),
+      db.collection("images.files").deleteMany({}),
+      db.collection("images.chunks").deleteMany({}),
       db.collection("entrepriseInfo").deleteMany({}),
     ]);
   }
@@ -262,7 +322,7 @@ async function main() {
   const normalizedProducts = await normalizeImages(products, db);
   const normalizedServices = await normalizeImages(services, db);
   const normalizedBoutique = await normalizeImages(boutiqueItems, db);
-  const normalizedBoutiqueWithCategory = normalizedBoutique.map(assignBoutiqueCategoryFields);
+  const normalizedBoutiqueWithCategory = normalizedBoutique.map(assignBoutiqueCategoryFields).map(normalizeBoutiqueDocument);
 
   await seedCollection(db, "news", normalizedNews, "slug", reset);
   await seedCollection(db, "products", normalizedProducts, "slug", reset);
@@ -271,6 +331,12 @@ async function main() {
   await seedCollection(db, "boutiqueCategories", boutiqueCategories, "slug", reset);
   await seedCollection(db, "poles", poles, "slug", reset);
   await seedCollection(db, "newsCategories", newsCategories, "id", reset);
+
+  await db.collection("boutique").createIndex({ slug: 1 }, { unique: true });
+  await db.collection("boutique").createIndex({ boutiqueCategoryId: 1 });
+  await db.collection("boutique").createIndex({ boutiqueSubcategoryId: 1 });
+  await db.collection("boutiqueCategories").createIndex({ slug: 1 }, { unique: true });
+  await db.collection("newsCategories").createIndex({ id: 1 }, { unique: true });
 
   const entrepriseInfo = {
     id: "main",

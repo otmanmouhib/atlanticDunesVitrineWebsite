@@ -5,7 +5,8 @@ export type BoutiqueItem = {
   description: string;
   details: string[];
   specs: { label: string; value: string }[];
-  price: string;
+  price: string | number;
+  currency?: string;
   availability: string;
   inStock: boolean;
   pole: string;
@@ -14,8 +15,6 @@ export type BoutiqueItem = {
   domainId: string;
   image: string;
   sku?: string;
-  unitPrice?: number;
-  currency?: string;
   inventoryCount?: number;
   gallery?: string[];
   warranty?: string;
@@ -53,7 +52,6 @@ export const boutiqueItems: BoutiqueItem[] = [
     domainId: "water",
     image: "/Pompe-centrifuge-industrielle-Grundfos.png",
     sku: "AD-BOUT-WTR-PMP-1500",
-    unitPrice: 3450,
     currency: "EUR",
     inventoryCount: 8,
     gallery: [

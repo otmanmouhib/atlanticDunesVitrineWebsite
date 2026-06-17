@@ -1,6 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getBoutiqueItems, getBoutiqueCategories, getDomainLabel, getPoleLabel, getPoles, getDomains } from "@/lib/db";
+import {
+  getBoutiqueItems,
+  getBoutiqueCategories,
+  getDomainLabel,
+  getPoleLabel,
+  getBoutiqueCategoryLabel,
+  getBoutiqueSubcategoryLabel,
+  getPoles,
+  getDomains,
+} from "@/lib/db";
+
+const formatPrice = (price: number, currency: string) =>
+  new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(price);
 
 export const dynamic = "force-dynamic";
 
@@ -41,22 +57,28 @@ export default async function BoutiquePage({
                 className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:border-brand-400 hover:shadow-lg"
               >
                 <div className="relative h-56 w-full overflow-hidden bg-slate-100">
-                  <Image src={`/api/images/${item.imageId}`} alt={item.title} fill className="object-cover" />
+                  <Image src={`/api/images/${item.image}`} alt={item.title} fill className="object-cover" />
                 </div>
                 <div className="p-6">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">{item.boutiqueCategoryId ?? "Boutique"}</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">
+                      {getBoutiqueCategoryLabel(item.boutiqueCategoryId ?? "", boutiqueCategories) ?? "Boutique"}
+                    </p>
                     {item.boutiqueSubcategoryId ? (
                       <>
                         <span className="text-xs text-slate-300">/</span>
-                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-700">{item.boutiqueSubcategoryId}</p>
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-700">
+                          {getBoutiqueSubcategoryLabel(item.boutiqueSubcategoryId, boutiqueCategories)}
+                        </p>
                       </>
                     ) : null}
                   </div>
                   <h2 className="mt-4 text-xl font-semibold text-slate-950 group-hover:text-brand-700">{item.title}</h2>
                   <p className="mt-3 text-sm leading-6 text-slate-600">{item.shortDescription}</p>
                   <div className="mt-5 flex items-center justify-between gap-4 text-sm">
-                    <p className="font-semibold text-slate-950">{item.price}</p>
+                    <p className="font-semibold text-slate-950">
+                      {formatPrice(item.price, item.currency ?? "EUR")}
+                    </p>
                     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${item.inStock ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>
                       {item.availability}
                     </span>

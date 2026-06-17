@@ -4,6 +4,13 @@ import QuoteButton from "@/components/QuoteButton";
 import Link from "next/link";
 import { getBoutiqueItemBySlug, getBoutiqueItems, getDomainLabel, getPoleLabel, getPoles, getDomains } from "@/lib/db";
 
+const formatPrice = (price: number, currency: string) =>
+  new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(price);
+
 export default async function BoutiqueProductPage({ params }: { params: { slug: string } }) {
   const item = await getBoutiqueItemBySlug(params.slug);
 
@@ -35,7 +42,7 @@ export default async function BoutiqueProductPage({ params }: { params: { slug: 
             <div className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-sm">
               <div className="relative h-[220px] w-full overflow-hidden rounded-3xl sm:h-[320px] lg:h-[420px]">
                 <Image
-                  src={`/api/images/${item.imageId}`}
+                  src={`/api/images/${item.image}`}
                   alt={item.title}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
@@ -112,11 +119,11 @@ export default async function BoutiqueProductPage({ params }: { params: { slug: 
                       className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-white p-3 text-left transition hover:border-brand-400 hover:bg-brand-50"
                     >
                       <div className="relative h-16 w-16 overflow-hidden rounded-2xl bg-slate-100">
-                        <Image src={`/api/images/${relatedItem.imageId}`} alt={relatedItem.title} fill className="object-cover" />
+                        <Image src={`/api/images/${relatedItem.image}`} alt={relatedItem.title} fill className="object-cover" />
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-slate-950">{relatedItem.title}</p>
-                        <p className="mt-1 text-xs text-slate-500">{relatedItem.price}</p>
+                        <p className="mt-1 text-xs text-slate-500">{formatPrice(relatedItem.price, relatedItem.currency ?? "EUR")}</p>
                       </div>
                     </Link>
                   ))
