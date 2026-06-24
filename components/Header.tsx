@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { Pole, DomainTag, BoutiqueCategory, NewsCategory } from "@/lib/db";
 
@@ -45,6 +45,23 @@ export default function Header({ serviceCategories, productCategories, boutiqueC
   const [openBoutiqueCategory, setOpenBoutiqueCategory] = useState<string | null>(null);
   const [openNewsCategory, setOpenNewsCategory] = useState<string | null>(null);
   const [openMobileSection, setOpenMobileSection] = useState<"none" | "services" | "products" | "boutique" | "news">("none");
+  const headerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!headerRef.current) return;
+      if (event.target instanceof Node && !headerRef.current.contains(event.target)) {
+        closeAllMenus();
+      }
+    };
+
+    if (openMenu !== "none" || isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return;
+  }, [openMenu, isOpen]);
 
   const toggleMenu = (menu: "products" | "services" | "boutique" | "news") => {
     setOpenMenu((current) => {
@@ -123,7 +140,7 @@ export default function Header({ serviceCategories, productCategories, boutiqueC
   }, [pathname, searchParams, poles, domains]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
+    <header ref={headerRef} className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="text-lg font-semibold text-brand-900">
           Atlantic Dunes
