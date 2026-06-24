@@ -14,7 +14,7 @@ export default async function ServicesPage({
   const [services, poles, domains] = await Promise.all([
     getServices(selectedPole === "all" ? undefined : selectedPole, selectedDomain === "all" ? undefined : selectedDomain),
     getPoles(),
-    getDomains(),
+    getDomains("service"),
   ]);
   const filtered = services;
 

@@ -1,6 +1,10 @@
 import clientPromise from "./mongodb";
 import { GridFSBucket } from "mongodb";
 import type { Document } from "mongodb";
+import { poles as staticPoles } from "../data/poles";
+import { products as staticProducts } from "../data/products";
+import { services as staticServices } from "../data/services";
+import { boutiqueCategories as staticBoutiqueCategories } from "../data/boutiqueCategories";
 
 export type DomainTag = {
   slug: string;
@@ -12,7 +16,9 @@ export type Pole = {
   slug: string;
   label: string;
   shortDescription: string;
-  domains: DomainTag[];
+  domains?: DomainTag[];
+  productDomains?: DomainTag[];
+  serviceDomains?: DomainTag[];
 };
 
 export type NewsCategory = {
@@ -126,6 +132,21 @@ async function getDb() {
   return client.db(dbName);
 }
 
+type MongoDocument = {
+  _id?: unknown;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+};
+
+function cleanDocument<T extends MongoDocument>(doc: T): Omit<T, "_id"> {
+  const { _id, ...rest } = doc;
+  return {
+    ...rest,
+    createdAt: rest.createdAt instanceof Date ? rest.createdAt.toISOString() : rest.createdAt,
+    updatedAt: rest.updatedAt instanceof Date ? rest.updatedAt.toISOString() : rest.updatedAt,
+  } as Omit<T, "_id">;
+}
+
 function getLabelFromList(slug: string, items: Array<{ slug: string; label: string }>, fallback?: string) {
   return items.find((item) => item.slug === slug)?.label ?? fallback ?? slug;
 }
@@ -153,13 +174,37 @@ export function getNewsSubcategoryLabel(subcategoryId: string, categories: NewsC
 
 export async function getPoles() {
   const db = await getDb();
-  return db.collection<Pole>("poles").find().toArray();
+  const rawPoles = await db.collection<Pole & MongoDocument>("poles").find().toArray();
+  return rawPoles.map((pole) => cleanDocument(pole) as Pole);
 }
 
-function getDomainsFromPoles(poles: Pole[]) {
+function getPoleDomains(pole: Pole, kind: "all" | "product" | "service" = "all") {
+  const domains: DomainTag[] = [];
+  const push = (items?: DomainTag[]) => {
+    for (const item of items ?? []) {
+      if (!domains.some((domain) => domain.slug === item.slug)) {
+        domains.push(item);
+      }
+    }
+  };
+
+  if (kind === "product") {
+    push(pole.productDomains ?? pole.domains);
+  } else if (kind === "service") {
+    push(pole.serviceDomains ?? pole.domains);
+  } else {
+    push(pole.domains);
+    push(pole.productDomains);
+    push(pole.serviceDomains);
+  }
+
+  return domains;
+}
+
+function getDomainsFromPoles(poles: Pole[], kind: "all" | "product" | "service" = "all") {
   const domainMap = new Map<string, DomainTag>();
   for (const pole of poles) {
-    for (const domain of pole.domains ?? []) {
+    for (const domain of getPoleDomains(pole, kind)) {
       if (!domainMap.has(domain.slug)) {
         domainMap.set(domain.slug, domain);
       }
@@ -168,14 +213,15 @@ function getDomainsFromPoles(poles: Pole[]) {
   return Array.from(domainMap.values());
 }
 
-export async function getDomains() {
+export async function getDomains(kind: "all" | "product" | "service" = "all") {
   const poles = await getPoles();
-  return getDomainsFromPoles(poles);
+  return getDomainsFromPoles(poles, kind);
 }
 
 export async function getNewsCategories() {
   const db = await getDb();
-  return db.collection<NewsCategory>("newsCategories").find().toArray();
+  const rawCategories = await db.collection<NewsCategory & MongoDocument>("newsCategories").find().toArray();
+  return rawCategories.map((category) => cleanDocument(category) as NewsCategory);
 }
 
 export async function getServices(pole?: string, domain?: string) {
@@ -183,12 +229,14 @@ export async function getServices(pole?: string, domain?: string) {
   const filter: Document = {};
   if (pole) filter.poleId = pole;
   if (domain) filter.domainId = domain;
-  return db.collection<Service>("services").find(filter).toArray();
+  const rawServices = await db.collection<Service & MongoDocument>("services").find(filter).toArray();
+  return rawServices.map((service) => cleanDocument(service) as Service);
 }
 
 export async function getServiceBySlug(slug: string) {
   const db = await getDb();
-  return db.collection<Service>("services").findOne({ slug });
+  const service = await db.collection<Service & MongoDocument>("services").findOne({ slug });
+  return service ? (cleanDocument(service) as Service) : null;
 }
 
 export async function getProducts(pole?: string, domain?: string) {
@@ -196,12 +244,14 @@ export async function getProducts(pole?: string, domain?: string) {
   const filter: Document = {};
   if (pole) filter.poleId = pole;
   if (domain) filter.domainId = domain;
-  return db.collection<Product>("products").find(filter).toArray();
+  const rawProducts = await db.collection<Product & MongoDocument>("products").find(filter).toArray();
+  return rawProducts.map((product) => cleanDocument(product) as Product);
 }
 
 export async function getProductBySlug(slug: string) {
   const db = await getDb();
-  return db.collection<Product>("products").findOne({ slug });
+  const product = await db.collection<Product & MongoDocument>("products").findOne({ slug });
+  return product ? (cleanDocument(product) as Product) : null;
 }
 
 export async function getBoutiqueItems(category?: string, subcategory?: string) {
@@ -214,12 +264,14 @@ export async function getBoutiqueItems(category?: string, subcategory?: string) 
 
 export async function getBoutiqueItemBySlug(slug: string) {
   const db = await getDb();
-  return db.collection<BoutiqueItem>("boutique").findOne({ slug });
+  const item = await db.collection<BoutiqueItem & MongoDocument>("boutique").findOne({ slug });
+  return item ? (cleanDocument(item) as BoutiqueItem) : null;
 }
 
 export async function getBoutiqueCategories() {
   const db = await getDb();
-  return db.collection<BoutiqueCategory>("boutiqueCategories").find().toArray();
+  const rawCategories = await db.collection<BoutiqueCategory & MongoDocument>("boutiqueCategories").find().toArray();
+  return rawCategories.map((category) => cleanDocument(category) as BoutiqueCategory);
 }
 
 export function getBoutiqueCategoryLabel(categoryId: string, categories: BoutiqueCategory[]) {
@@ -239,17 +291,20 @@ export async function getNewsArticles(category?: string, subcategory?: string) {
   const filter: Document = {};
   if (category) filter.categoryId = category;
   if (subcategory) filter.subcategoryId = subcategory;
-  return db.collection<NewsArticle>("news").find(filter).sort({ publishedAt: -1 }).toArray();
+  const rawArticles = await db.collection<NewsArticle & MongoDocument>("news").find(filter).sort({ publishedAt: -1 }).toArray();
+  return rawArticles.map((article) => cleanDocument(article) as NewsArticle);
 }
 
 export async function getNewsArticleBySlug(slug: string) {
   const db = await getDb();
-  return db.collection<NewsArticle>("news").findOne({ slug });
+  const article = await db.collection<NewsArticle & MongoDocument>("news").findOne({ slug });
+  return article ? (cleanDocument(article) as NewsArticle) : null;
 }
 
 export async function getEnterpriseInfo() {
   const db = await getDb();
-  return db.collection<EnterpriseInfo & { _id: string } & { _id: string }>("entrepriseInfo").findOne({ _id: "main" });
+  const info = await db.collection<EnterpriseInfo & MongoDocument>("entrepriseInfo").findOne({ _id: "main" } as any);
+  return info ? (cleanDocument(info) as EnterpriseInfo) : null;
 }
 
 export async function getImageById(imageId: string) {
@@ -306,31 +361,48 @@ export async function storeImageBuffer(imageId: string, buffer: Buffer, contentT
 }
 
 export async function getMenuCategories() {
-  const [services, products, boutiqueCategories, poles] = await Promise.all([
-    getServices(),
-    getProducts(),
-    getBoutiqueCategories(),
-    getPoles(),
-  ]);
+  let services = null;
+  let products = null;
+  let boutiqueCategories = null;
+  let poles = null;
 
-  const domains = getDomainsFromPoles(poles);
+  try {
+    [services, products, boutiqueCategories, poles] = await Promise.all([
+      getServices(),
+      getProducts(),
+      getBoutiqueCategories(),
+      getPoles(),
+    ]);
 
-  const build = (items: Array<{ poleId: string; domainId: string }>) => {
+    if (!services?.length || !products?.length || !boutiqueCategories?.length || !poles?.length) {
+      throw new Error('MongoDB menu collections are empty or incomplete.');
+    }
+  } catch (error) {
+    console.warn("Failed to load menu data from MongoDB. Falling back to static content.", error);
+    services = staticServices;
+    products = staticProducts;
+    boutiqueCategories = staticBoutiqueCategories;
+    poles = staticPoles;
+  }
+
+  const domains = getDomainsFromPoles(poles, "all");
+
+  const build = (domainKind: "product" | "service") => {
     return poles
       .map((pole) => {
-        const hasItems = items.some((item) => item.poleId === pole.slug);
-        if (!hasItems) return null;
+        const domains = getPoleDomains(pole, domainKind);
+        if (!domains.length) return null;
         return {
           pole: { slug: pole.slug, label: pole.label },
-          domains: pole.domains.map((domain) => ({ slug: domain.slug, label: domain.label })),
+          domains: domains.map((domain) => ({ slug: domain.slug, label: domain.label })),
         };
       })
       .filter((entry): entry is MenuCategory => entry !== null);
   };
 
   return {
-    serviceCategories: build(services),
-    productCategories: build(products),
+    serviceCategories: build("service"),
+    productCategories: build("product"),
     boutiqueCategories,
     poles,
     domains,

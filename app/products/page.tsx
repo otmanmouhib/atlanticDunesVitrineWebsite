@@ -15,7 +15,7 @@ export default async function ProductsPage({
   const [products, poles, domains] = await Promise.all([
     getProducts(selectedPole === "all" ? undefined : selectedPole, selectedDomain === "all" ? undefined : selectedDomain),
     getPoles(),
-    getDomains(),
+    getDomains("product"),
   ]);
   const filtered = products;
 

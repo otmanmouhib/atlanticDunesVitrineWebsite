@@ -14,7 +14,7 @@ export default async function ServicePage({ params }: { params: { slug: string }
     getServices(),
     getProducts(service.poleId),
     getPoles(),
-    getDomains(),
+    getDomains("service"),
   ]);
 
   const related = allServices.filter((item) => item.poleId === service.poleId && item.slug !== service.slug).slice(0, 3);

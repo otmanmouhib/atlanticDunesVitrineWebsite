@@ -15,7 +15,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
     getProducts(product.poleId),
     getServices(),
     getPoles(),
-    getDomains(),
+    getDomains("product"),
   ]);
 
   const related = relatedProducts.filter((item) => item.poleId === product.poleId && item.slug !== product.slug).slice(0, 3);
