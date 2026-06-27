@@ -2,6 +2,8 @@
 
 Production-ready Next.js template for **Atlantic Dunes** — bureau d’étude & expertise et installations industrielles clé en main.
 
+Versioned technical documentation: [docs/technical-documentation-v0.1.0-alpha.md](docs/technical-documentation-v0.1.0-alpha.md)
+
 ## Caractéristiques
 
 - Next.js 14 App Router
@@ -45,4 +47,4 @@ npm run start
 2. Connectez le dépôt sur https://vercel.com.
 3. Vercel détecte automatiquement Next.js et déploie.
 
-> Aucun backend requis. Le site fonctionne entièrement avec du contenu statique et des pages dynamiques générées à la compilation.
+> Note: this repository now includes a MongoDB-backed backend for content, media, and contact submissions. Some menu and content data still fall back to static sources when the database is unavailable.
