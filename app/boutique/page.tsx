@@ -3,12 +3,8 @@ import Link from "next/link";
 import {
   getBoutiqueItems,
   getBoutiqueCategories,
-  getDomainLabel,
-  getPoleLabel,
   getBoutiqueCategoryLabel,
   getBoutiqueSubcategoryLabel,
-  getPoles,
-  getDomains,
 } from "@/lib/db";
 
 const formatPrice = (price: number, currency: string) =>
@@ -28,11 +24,9 @@ export default async function BoutiquePage({
   const selectedCategory = searchParams.category ?? "all";
   const selectedSubcategory = searchParams.subcategory ?? "all";
 
-  const [items, boutiqueCategories, poles, domains] = await Promise.all([
+  const [items, boutiqueCategories] = await Promise.all([
     getBoutiqueItems(selectedCategory === "all" ? undefined : selectedCategory, selectedSubcategory === "all" ? undefined : selectedSubcategory),
     getBoutiqueCategories(),
-    getPoles(),
-    getDomains(),
   ]);
   const filtered = items;
 
@@ -57,7 +51,11 @@ export default async function BoutiquePage({
                 className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:border-brand-400 hover:shadow-lg"
               >
                 <div className="relative h-56 w-full overflow-hidden bg-slate-100">
-                  <Image src={`/api/images/${item.image}`} alt={item.title} fill className="object-cover" />
+                  {item.imageId ? (
+                    <Image src={`/api/images/${item.imageId}`} alt={item.title} fill className="object-cover" />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-slate-500">Visuel boutique</div>
+                  )}
                 </div>
                 <div className="p-6">
                   <div className="flex flex-wrap items-center gap-2">

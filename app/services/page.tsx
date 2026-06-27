@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import Image from "next/image";
 import Link from "next/link";
 import { getDomainLabel, getPoleLabel, getPoles, getDomains, getServices } from "@/lib/db";
 
@@ -38,15 +39,24 @@ export default async function ServicesPage({
           <Link
             key={service.slug}
             href={`/services/${service.slug}`}
-            className="group overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 transition hover:border-brand-400 hover:shadow-lg"
+            className="group overflow-hidden rounded-3xl border border-slate-200 bg-white transition hover:border-brand-400 hover:shadow-lg"
           >
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">{getPoleLabel(service.poleId, poles)}</p>
-              <span className="text-xs text-slate-300">/</span>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-700">{getDomainLabel(service.domainId, domains)}</p>
+            <div className="relative h-56 w-full overflow-hidden bg-slate-100">
+              {service.imageId ? (
+                <Image src={`/api/images/${service.imageId}`} alt={service.title} fill className="object-cover" />
+              ) : (
+                <div className="flex h-full items-center justify-center text-slate-500">Visuel service</div>
+              )}
             </div>
-            <h2 className="mt-4 text-xl font-semibold text-slate-950 group-hover:text-brand-700">{service.title}</h2>
-            <p className="mt-4 text-sm leading-6 text-slate-600">{service.shortDescription}</p>
+            <div className="p-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">{getPoleLabel(service.poleId, poles)}</p>
+                <span className="text-xs text-slate-300">/</span>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-700">{getDomainLabel(service.domainId, domains)}</p>
+              </div>
+              <h2 className="mt-4 text-xl font-semibold text-slate-950 group-hover:text-brand-700">{service.title}</h2>
+              <p className="mt-4 text-sm leading-6 text-slate-600">{service.shortDescription}</p>
+            </div>
           </Link>
         ))}
       </div>

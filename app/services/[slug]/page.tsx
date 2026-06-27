@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import QuoteButton from "@/components/QuoteButton";
 import Link from "next/link";
@@ -39,6 +40,17 @@ export default async function ServicePage({ params }: { params: { slug: string }
 
         <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
           <div>
+            {service.imageId && (
+              <div className="mb-8 overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-sm">
+                <Image
+                  src={`/api/images/${service.imageId}`}
+                  alt={service.title}
+                  width={1200}
+                  height={700}
+                  className="h-72 w-full object-cover"
+                />
+              </div>
+            )}
             <p className="text-base leading-8 text-slate-700">{service.description}</p>
             <div className="mt-8 rounded-3xl bg-slate-50 p-6">
               <h2 className="text-xl font-semibold text-slate-950">Méthodologie</h2>

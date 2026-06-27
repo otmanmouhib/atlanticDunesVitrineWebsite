@@ -2,7 +2,13 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import QuoteButton from "@/components/QuoteButton";
 import Link from "next/link";
-import { getBoutiqueItemBySlug, getBoutiqueItems, getDomainLabel, getPoleLabel, getPoles, getDomains } from "@/lib/db";
+import {
+  getBoutiqueItemBySlug,
+  getBoutiqueItems,
+  getBoutiqueCategories,
+  getBoutiqueCategoryLabel,
+  getBoutiqueSubcategoryLabel,
+} from "@/lib/db";
 
 const formatPrice = (price: number, currency: string) =>
   new Intl.NumberFormat("fr-FR", {
@@ -18,13 +24,12 @@ export default async function BoutiqueProductPage({ params }: { params: { slug: 
     notFound();
   }
 
-  const [relatedItems, poles, domains] = await Promise.all([
-    getBoutiqueItems(item.poleId),
-    getPoles(),
-    getDomains(),
+  const [relatedItems, boutiqueCategories] = await Promise.all([
+    getBoutiqueItems(item.boutiqueCategoryId, item.boutiqueSubcategoryId),
+    getBoutiqueCategories(),
   ]);
 
-  const related = relatedItems.filter((other) => other.poleId === item.poleId && other.slug !== item.slug).slice(0, 3);
+  const related = relatedItems.filter((other) => other.slug !== item.slug).slice(0, 3);
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
@@ -41,13 +46,17 @@ export default async function BoutiqueProductPage({ params }: { params: { slug: 
           <div className="space-y-8">
             <div className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-sm">
               <div className="relative h-[220px] w-full overflow-hidden rounded-3xl sm:h-[320px] lg:h-[420px]">
-                <Image
-                  src={`/api/images/${item.image}`}
-                  alt={item.title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
-                  className="object-cover"
-                />
+                {item.imageId ? (
+                  <Image
+                    src={`/api/images/${item.imageId}`}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-slate-500">Visuel boutique</div>
+                )}
               </div>
             </div>
 
@@ -95,16 +104,20 @@ export default async function BoutiqueProductPage({ params }: { params: { slug: 
             </div>
 
             <div>
-              <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Pôle</p>
+              <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Catégorie</p>
               <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-700">
-                {item.poleId ? getPoleLabel(item.poleId, poles) : "Non défini"}
+                {item.boutiqueCategoryId
+                  ? getBoutiqueCategoryLabel(item.boutiqueCategoryId, boutiqueCategories)
+                  : "Non définie"}
               </p>
             </div>
 
             <div>
-              <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Domaine</p>
+              <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Sous-catégorie</p>
               <p className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900">
-                {item.domainId ? getDomainLabel(item.domainId, domains) : "Non défini"}
+                {item.boutiqueSubcategoryId
+                  ? getBoutiqueSubcategoryLabel(item.boutiqueSubcategoryId, boutiqueCategories)
+                  : "Non définie"}
               </p>
             </div>
 
@@ -119,7 +132,11 @@ export default async function BoutiqueProductPage({ params }: { params: { slug: 
                       className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-white p-3 text-left transition hover:border-brand-400 hover:bg-brand-50"
                     >
                       <div className="relative h-16 w-16 overflow-hidden rounded-2xl bg-slate-100">
-                        <Image src={`/api/images/${relatedItem.image}`} alt={relatedItem.title} fill className="object-cover" />
+                        {relatedItem.imageId ? (
+                          <Image src={`/api/images/${relatedItem.imageId}`} alt={relatedItem.title} fill className="object-cover" />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-[10px] text-slate-500">N/A</div>
+                        )}
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-slate-950">{relatedItem.title}</p>

@@ -82,8 +82,12 @@ export type BoutiqueItem = {
   featured?: boolean;
   status?: string;
   tags?: string[];
+  imageId?: string;
+  galleryImageIds?: string[];
   image?: string;
   gallery?: string[];
+  category?: string;
+  subcategory?: string;
   boutiqueCategoryId?: string;
   boutiqueSubcategoryId?: string;
   poleId?: string;
@@ -257,15 +261,49 @@ export async function getProductBySlug(slug: string) {
 export async function getBoutiqueItems(category?: string, subcategory?: string) {
   const db = await getDb();
   const filter: Document = {};
-  if (category) filter.boutiqueCategoryId = category;
-  if (subcategory) filter.boutiqueSubcategoryId = subcategory;
-  return db.collection<BoutiqueItem>("boutique").find(filter).toArray();
+  if (category) {
+    filter.$or = [{ boutiqueCategoryId: category }, { category }];
+  }
+  if (subcategory) {
+    filter.$and = [{ $or: [{ boutiqueSubcategoryId: subcategory }, { subcategory }] }];
+  }
+
+  const rawItems = await db.collection<BoutiqueItem & MongoDocument>("boutique").find(filter).toArray();
+  return rawItems.map((item) => normalizeBoutiqueItem(cleanDocument(item) as BoutiqueItem));
 }
 
 export async function getBoutiqueItemBySlug(slug: string) {
   const db = await getDb();
   const item = await db.collection<BoutiqueItem & MongoDocument>("boutique").findOne({ slug });
-  return item ? (cleanDocument(item) as BoutiqueItem) : null;
+  return item ? normalizeBoutiqueItem(cleanDocument(item) as BoutiqueItem) : null;
+}
+
+function normalizeBoutiqueItem(item: BoutiqueItem): BoutiqueItem {
+  const parsePrice = (value: unknown) => {
+    if (typeof value === "number") return value;
+    if (typeof value !== "string") return 0;
+    const numeric = value.replace(/[^0-9,.]/g, "").replace(/,/g, ".");
+    const parsed = Number.parseFloat(numeric);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
+  const normalizedImageId = item.imageId ?? item.image;
+  const normalizedGallery = item.galleryImageIds ?? item.gallery;
+  const normalizedCategory = item.boutiqueCategoryId ?? item.category;
+  const normalizedSubcategory = item.boutiqueSubcategoryId ?? item.subcategory;
+
+  return {
+    ...item,
+    details: Array.isArray(item.details) ? item.details : [],
+    specs: Array.isArray(item.specs) ? item.specs : [],
+    price: parsePrice(item.price),
+    currency: item.currency ?? "MAD",
+    availability: item.availability ?? (item.inStock ? "En stock" : "Sur demande"),
+    imageId: normalizedImageId,
+    galleryImageIds: normalizedGallery,
+    boutiqueCategoryId: normalizedCategory,
+    boutiqueSubcategoryId: normalizedSubcategory,
+  };
 }
 
 export async function getBoutiqueCategories() {
@@ -308,8 +346,28 @@ export async function getEnterpriseInfo() {
 }
 
 export async function getImageById(imageId: string) {
-  const db = await getDb();
-  return db.collection<{ _id: string; filename: string; contentType?: string; data: Buffer }>("images").findOne({ _id: imageId });
+  const meta = await getImageMeta(imageId);
+  if (!meta) {
+    return null;
+  }
+
+  const stream = await getImageStreamById(imageId);
+  const chunks: Buffer[] = [];
+
+  return await new Promise<{ _id: string; filename: string; contentType?: string; data: Buffer } | null>((resolve, reject) => {
+    stream.on("data", (chunk) => {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    });
+    stream.on("error", (error) => reject(error));
+    stream.on("end", () => {
+      resolve({
+        _id: imageId,
+        filename: imageId,
+        contentType: meta.metadata?.contentType ?? meta.contentType,
+        data: Buffer.concat(chunks),
+      });
+    });
+  });
 }
 
 async function getGridFSBucket() {
